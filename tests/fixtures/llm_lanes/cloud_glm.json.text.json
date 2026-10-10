@@ -1,0 +1,27 @@
+{
+  "provider": "bigmodel",
+  "transport": "anthropic_messages",
+  "base_url": "https://open.bigmodel.cn/api/anthropic",
+  "api_key_env": "GLM_API_KEY",
+  "cc_switch_provider": "Zhipu GLM copy",
+  "model": "glm-5.3",
+  "supports_images": true,
+  "use_proxy": false,
+  "timeout_seconds": 60,
+  "total_timeout_seconds": 300,
+  "stream": true,
+  "review_max_tokens": 12000,
+  "configuration_source": "User authorized claude-glm configured API/key. Text completion and image capability independently checked; content review remains gated.",
+  "vision_model": "glm-5.3-flash",
+  "execution": "cloud_ssh",
+  "cloud_min_output_tokens": 12000,
+  "cloud_worker": {
+    "host": "ma-user@modelarts.example.invalid",
+    "port": 32295,
+    "identity_file": "~/.ssh/id_rsa",
+    "code_root": "/home/ma-user/.video-workflow-review/rpc_20261002",
+    "state_root": "/home/ma-user/.video-workflow-review/rpc_state",
+    "python": "python3",
+    "wait_seconds": 960
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "limit": 1,
+  "music": {
+    "path": "/path/to/workflow/output/douyin_v3_2_20261001/music_bed.wav",
+    "license_note": "既有样片配乐，仅用于本地流水线验收；对外发布需确认许可。"
+  },
+  "requirements": "深海钻探。开头具体、有悬念，专业名词有原文依据，不能混淆水深与钻探深度；多机位、精准工程结构、男低音、短句。结尾有余音与自然评论提问。"
+}

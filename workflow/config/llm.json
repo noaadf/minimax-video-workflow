@@ -1,0 +1,53 @@
+{
+ "config_version": 2,
+ "provider": "robo",
+ "transport": "anthropic_messages",
+ "base_url": "https://ai-api.d-robotics.cc",
+ "api_key_env": "ROBO_API_KEY",
+ "cc_switch_provider": "Zhipu GLM copy",
+ "model": "kimi-k3",
+ "supports_images": true,
+ "use_proxy": false,
+ "timeout_seconds": 300,
+ "total_timeout_seconds": 900,
+ "stream": true,
+ "review_max_tokens": 16000,
+ "configuration_source": "User authorized claude-glm configured API/key. Text completion and image capability independently checked; content review remains gated.",
+ "vision_model": "glm-5.3-flash",
+ "thinking": null,
+ "vision_override": {
+  "provider": "robo",
+  "base_url": "https://ai-api.d-robotics.cc",
+  "api_key_env": "ROBO_API_KEY",
+  "shell_settings_source": {
+   "path": "~/.zshrc",
+   "function": "claude-robo"
+  },
+  "transport": "anthropic_messages",
+  "model": "kimi-k3",
+  "supports_images": true,
+  "stream": true,
+  "timeout_seconds": 300,
+  "total_timeout_seconds": 900,
+  "execution": "direct",
+  "unset": [
+   "thinking"
+  ]
+ },
+ "shell_settings_source": {
+  "path": "~/.zshrc",
+  "function": "claude-robo"
+ },
+ "execution": "direct",
+ "final_review_override": {
+  "transport": "codex_agentic",
+  "model": "gpt-6.1-sol",
+  "workspace": "/path/to/workflow",
+  "sandbox": "read-only",
+  "reasoning_effort": "high",
+  "web_search": false,
+  "review_draws": 1,
+  "total_timeout_seconds": 1200,
+  "supports_images": true
+ }
+}

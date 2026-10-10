@@ -1,0 +1,7 @@
+{
+  "seeds": ["https://gz.people.com.cn/n2/2025/1230/c411544-41458526.html"],
+  "domains": ["people.com.cn"],
+  "discover_links": false,
+  "max_articles": 1,
+  "max_age_days": 730
+}

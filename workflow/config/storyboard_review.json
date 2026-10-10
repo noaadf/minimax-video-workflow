@@ -1,0 +1,19 @@
+{
+  "config_version": 2,
+  "extends": "llm.json",
+  "provider": "robo",
+  "transport": "anthropic_messages",
+  "base_url": "https://ai-api.d-robotics.cc",
+  "api_key_env": "ROBO_API_KEY",
+  "cc_switch_provider": "Zhipu GLM copy",
+  "model": "kimi-k3",
+  "supports_images": true,
+  "use_proxy": false,
+  "timeout_seconds": 420,
+  "total_timeout_seconds": 1200,
+  "stream": false,
+  "shell_settings_source": {
+    "path": "~/.zshrc",
+    "function": "claude-robo"
+  }
+}

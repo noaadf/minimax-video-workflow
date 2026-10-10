@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>国之重器 · 三区看板</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1118;--panel:#121d28;--edge:#273443;--ink:#edf3f7;--muted:#93a6b7;--gold:#f7d16b;--green:#74d8ad;--red:#ff9393}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}button{font:inherit;cursor:pointer}a{color:var(--gold);text-decoration:none}
+header{padding:20px 30px;border-bottom:1px solid var(--edge);display:flex;justify-content:space-between;align-items:center;gap:16px}.brand{font-size:20px;font-weight:700;letter-spacing:2px}.eyebrow{font-size:10px;letter-spacing:3px;color:var(--gold);font-weight:600}.muted{color:var(--muted)}
+main{max-width:1280px;margin:auto;padding:22px 30px}
+.tabs{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.tab{border:1px solid var(--edge);background:var(--panel);color:var(--ink);border-radius:10px;padding:11px 18px;font-size:14px}
+.tab.active{border-color:var(--gold);color:var(--gold);font-weight:600}
+.tab .n{display:inline-block;margin-left:7px;font-size:11px;background:#2a3848;border-radius:9px;padding:2px 8px;color:#bfcedb}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+.card{border:1px solid var(--edge);background:var(--panel);border-radius:13px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.badge{font-size:11px;align-self:flex-start;border-radius:6px;padding:3px 9px;background:#2a3848;color:#bfcedb}
+.badge.approved{background:#193b36;color:var(--green)}.badge.ready{background:#273c4c;color:#a5d8fd}
+.badge.waiting{background:#3a3421;color:var(--gold)}.badge.stuck{background:#462e30;color:var(--red)}
+.card h2{font-size:15px;margin:0;line-height:1.4}.hint{font-size:12px;color:var(--muted);margin:0}
+video{width:100%;aspect-ratio:9/16;max-height:300px;object-fit:contain;background:#0e1923;border-radius:9px;border:1px solid #2c3c4b}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.publish{background:var(--gold);color:#241d08;border:0;border-radius:8px;padding:10px 14px;font-weight:600}
+.publish:disabled{opacity:.5}
+.secondary{padding:8px 11px;border:1px solid #4d5a65;border-radius:7px;color:var(--ink);font-size:12px;background:#1d2a36}
+.mat{font-size:12px;color:var(--muted);overflow-wrap:anywhere}.mat b{color:var(--ink)}
+.empty{padding:34px;text-align:center;color:var(--muted);border:1px dashed var(--edge);border-radius:13px}
+.foot{margin-top:26px;font-size:12px}
+</style>
+<header><div><div class="eyebrow">PRODUCTION BOARD</div><div class="brand">国之重器 / 三区看板</div></div>
+<div><a href="/products">← 产品总览（含审批与导出）</a>　<span class="muted" id="conn">连接中</span></div></header>
+<main>
+<nav class="tabs">
+<button class="tab active" data-lane="done">迭代结束<span class="n" id="nDone">0</span></button>
+<button class="tab" data-lane="waiting">正在等待<span class="n" id="nWait">0</span></button>
+<button class="tab" data-lane="materials">未开始素材<span class="n" id="nMat">0</span></button>
+</nav>
+<div id="lane"></div>
+<details style="margin-top:22px" id="matForm"><summary style="cursor:pointer;color:var(--gold)">＋ 提交新素材（文章 / 剧本）</summary>
+ <div style="border:1px solid var(--edge);border-radius:12px;padding:16px;margin-top:10px;display:flex;flex-direction:column;gap:10px;background:var(--panel)">
+  <input id="matTitle" placeholder="标题（可选）" style="background:#0e1923;border:1px solid #2c3c4b;border-radius:8px;padding:10px;color:var(--ink)">
+  <input id="matUrl" placeholder="来源链接（可选，http(s)://…）" style="background:#0e1923;border:1px solid #2c3c4b;border-radius:8px;padding:10px;color:var(--ink)">
+  <textarea id="matText" rows="8" placeholder="粘贴文章或剧本全文（与链接至少填一项）。提交后进入素材库，由编导 agent 梳理：故事审 → 素材包 → 编排 → 生产。" style="background:#0e1923;border:1px solid #2c3c4b;border-radius:8px;padding:10px;color:var(--ink);font:inherit"></textarea>
+  <div class="row"><button class="publish" id="matSubmit">提交到素材库</button><span class="muted" id="matMsg"></span></div>
+ </div></details>
+<p class="foot muted">「已发布」= 记账归档并停止该产品的自动迭代（可逆，成片文件保留在原位）。每 10 秒自动刷新。</p>
+</main>
+<script>
+const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let data=null, lane='done';
+const matLabels={awaiting_material_review:'待素材复核',held_evidence:'证据待补',held_freshness:'新鲜度待核',held_story_review:'故事审待过',material_needs_revision:'素材需修订',preparing:'准备中',waiting:'排队中',launch_intent:'启动中',attention:'需要关注',pending_editorial_review:'待编导梳理',production_attention:'生产需关注',ready_for_human_review:'待人工复核'};
+function token(){return sessionStorage.getItem('review_token')}
+async function ensureToken(){if(token())return token();const r=await(await fetch('/api/delivery-actions')).json();const t=r.review_token||r.token;sessionStorage.setItem('review_token',t);return t}
+function doneCard(p){
+ return `<div class="card"><span class="badge ${p.approved?'approved':'ready'}">${esc(p.status)}</span><h2>${esc(p.title)}</h2>
+ <p class="hint">${esc(p.id)} · 版本 ${esc((p.current.video_sha256||'').slice(0,8))}</p>
+ <video controls preload="metadata" src="${esc(p.current.video_url)}"></video>
+ <div class="row"><button class="publish" data-pub="${esc(p.id)}">已发布</button>
+ <button class="secondary" data-repair="${esc(p.current.id)}" data-sha="${esc(p.current.video_sha256||'')}">要求返修</button>
+ <a class="secondary" href="${esc(p.current.video_url)}" download>下载成片</a>
+ <a class="secondary" href="/products">总览详情</a></div></div>`;
+}
+function waitCard(p){
+ const stuck=p.status.includes('隔离')||p.status.includes('失败');
+ return `<div class="card"><span class="badge ${stuck?'stuck':'waiting'}">${esc(p.status)}</span><h2>${esc(p.title)}</h2>
+ <p class="hint">${esc(p.id)}</p><p class="hint">${esc(p.status_reason)}</p>
+ <div class="row">${p.current?`<a class="secondary" href="${esc(p.current.video_url)}" target="_blank">看当前成片</a>`:''}
+ ${p.requests.map(r=>`<span class="hint">返修(${esc(r.status)})</span>`).join('')}
+ <span class="hint">处理中任务 ${p.active_count}</span></div></div>`;
+}
+function matCard(m){
+ return `<div class="card"><span class="badge waiting">${esc(matLabels[m.state]||m.state)}</span>
+ <h2>${esc(m.id)}</h2><p class="hint">${esc(m.detail)}</p>
+ <p class="hint">更新于 ${new Date(m.updated*1000).toLocaleString('zh-CN',{hour12:false})}</p></div>`;
+}
+let lastFingerprint='';
+function render(){
+ if(!data)return;
+ // Data-unchanged frames must not re-render: rebuilding the DOM would reload
+ // (and thus interrupt) any video the user is mid-way through.
+ const fp=JSON.stringify([lane,data.done,data.waiting,data.materials,data.published]);
+ if(fp===lastFingerprint)return; lastFingerprint=fp;
+ $('#nDone').textContent=data.done.length;$('#nWait').textContent=data.waiting.length;$('#nMat').textContent=data.materials.length;
+ document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.lane===lane));
+ const host=$('#lane');
+ if(lane==='done')host.innerHTML=data.done.length?`<div class="grid">${data.done.map(doneCard).join('')}</div>`:'<div class="empty">暂无迭代结束的成片</div>';
+ if(lane==='waiting')host.innerHTML=data.waiting.length?`<div class="grid">${data.waiting.map(waitCard).join('')}</div>`:'<div class="empty">没有在等待的产品</div>';
+ if(lane==='materials')host.innerHTML=data.materials.length?`<div class="grid">${data.materials.map(matCard).join('')}</div>`:'<div class="empty">没有未开始的素材</div>';
+}
+$('#lane').addEventListener('click',async e=>{
+ const pub=e.target.closest('[data-pub]');
+ if(pub){const pid=pub.dataset.pub;
+  if(!confirm(`确认「${pid}」已发布？\n它将从看板移除并停止自动迭代（可逆）。`))return;
+  pub.disabled=true;
+  try{const r=await fetch('/api/archive-product',{method:'POST',headers:{'Content-Type':'application/json','X-Workflow-Token':await ensureToken()},body:JSON.stringify({product_id:pid})});
+   const out=await r.json();if(!r.ok)throw Error(out.error);await update();
+  }catch(err){alert(err.message);pub.disabled=false}
+  return;}
+ const rep=e.target.closest('[data-repair]');
+ if(rep){
+  const note=prompt('返修说明（哪里有问题、期望怎么改）：');
+  if(note==null)return;
+  rep.disabled=true;
+  try{const r=await fetch('/api/request-repair',{method:'POST',headers:{'Content-Type':'application/json','X-Workflow-Token':await ensureToken()},body:JSON.stringify({job_id:rep.dataset.repair,video_sha256:rep.dataset.sha||null,note:note})});
+   const out=await r.json();if(!r.ok)throw Error(out.error||'提交失败');alert('返修请求已登记，管线会安排处理。');await update();
+  }catch(err){alert(err.message);rep.disabled=false}
+ }
+});
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{lane=t.dataset.lane;render()});
+$('#matSubmit').addEventListener('click',async e=>{
+ const btn=e.target,msg=$('#matMsg');
+ try{btn.disabled=true;msg.textContent='提交中…';
+  const r=await fetch('/api/add-material',{method:'POST',headers:{'Content-Type':'application/json','X-Workflow-Token':await ensureToken()},
+   body:JSON.stringify({text:$('#matText').value.trim()||null,title:$('#matTitle').value.trim()||null,url:$('#matUrl').value.trim()||null})});
+  const out=await r.json();if(!r.ok)throw Error(out.error||'提交失败');
+  msg.textContent='已入库：'+out.content_id+'（待编导梳理）';$('#matText').value='';$('#matUrl').value='';$('#matTitle').value='';
+  lane='materials';await update();
+ }catch(err){msg.textContent='失败：'+err.message}finally{btn.disabled=false}
+});
+async function update(){try{const r=await fetch('/api/board',{cache:'no-store'});if(!r.ok)throw Error();data=await r.json();render();$('#conn').textContent='已更新 '+new Date().toLocaleTimeString('zh-CN',{hour12:false})}catch(e){$('#conn').textContent='连接中断'}}update();setInterval(update,10000);
+</script></html>

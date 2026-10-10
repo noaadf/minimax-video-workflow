@@ -1,0 +1,241 @@
+{
+  "schema_version": 1,
+  "id": "bridge_fresh_voice_smoke_v3",
+  "title": "自动文案与配音验收｜既有画面素材",
+  "cover_title": "高墩上的毫米级追求",
+  "template": "engineering_tension",
+  "duration_seconds": 30,
+  "aspect_ratio": "9:16",
+  "facts": [
+    {
+      "id": "F1",
+      "text": "最高墩117米",
+      "source_url": "https://gz.people.com.cn/n2/2025/1230/c411544-41458526.html"
+    },
+    {
+      "id": "F2",
+      "text": "高墩线形毫米级精度要求",
+      "source_url": "https://gz.people.com.cn/n2/2025/1230/c411544-41458526.html"
+    },
+    {
+      "id": "F3",
+      "text": "液压爬模工艺",
+      "source_url": "https://gz.people.com.cn/n2/2025/1230/c411544-41458526.html"
+    },
+    {
+      "id": "F4",
+      "text": "智能爬模监测顶升同步偏差",
+      "source_url": "https://gz.people.com.cn/n2/2025/1230/c411544-41458526.html"
+    },
+    {
+      "id": "F5",
+      "text": "激光雷达与BIM点云模型",
+      "source_url": "https://gz.people.com.cn/n2/2025/1230/c411544-41458526.html"
+    },
+    {
+      "id": "F6",
+      "text": "智能塔机远程驾驶、地面操控",
+      "source_url": "https://gz.people.com.cn/n2/2025/1230/c411544-41458526.html"
+    }
+  ],
+  "continuity_bible": "全片为回顾性AI插画，不呈现为新闻现场或真实影像。同一座山谷桥梁施工场景贯穿：画面中央为同一座竖直高墩，液压爬模始终环绕其上部；塔机位于画面右侧，山谷与对岸保持一致。镜头可改变高度、距离和方位，但墩、爬模与塔机的相对位置不变。人物仅作无身份标识的建设者形象。画面不出现标志、日期、虚构读数、事故或险情；技术界面仅作不含具体数据的示意。男低音旁白由紧张转入解释、成就感与悠长收束。",
+  "comment_prompt": "如果你参与这样的高墩建设，会更想负责爬模同步监测，还是点云模型核对？为什么？",
+  "shots": [
+    {
+      "id": "S01",
+      "camera": "Low-angle wide view from the valley floor, rising tilt",
+      "duration_seconds": 3,
+      "prompt": "AI editorial illustration, vertical 9:16. Look up from the quiet valley floor toward one exceptionally tall bridge pier under construction; its upper formwork is visible, with the tower crane consistently on frame right. A swift upward tilt conveys scale and tension through height alone. Clear daylight, stable structural geometry, no falling objects, no danger event, no text, no logos. Natural wind ambience only.",
+      "seed": 4101,
+      "fact_ids": [
+        "F1"
+      ],
+      "source_path": "/path/to/workflow/output/douyin_v3_2_20261001/gpu4_raw.mp4",
+      "source_start": 0
+    },
+    {
+      "id": "S02",
+      "camera": "High oblique view looking down along the pier",
+      "duration_seconds": 4,
+      "prompt": "AI editorial illustration of the same pier, formwork and right-side tower crane. From above, trace the long straight edges of the pier down toward the valley; a restrained visual guide line suggests alignment without displaying numbers or pretending to be a real survey record. Precise, stable geometry, no text or logos. Natural wind and distant site ambience only.",
+      "seed": 4102,
+      "fact_ids": [
+        "F2"
+      ],
+      "source_path": "/path/to/workflow/output/douyin_v3_2_20261001/gpu5_raw.mp4",
+      "source_start": 0
+    },
+    {
+      "id": "S03",
+      "camera": "Medium side view at formwork level",
+      "duration_seconds": 4,
+      "prompt": "AI editorial illustration. Show hydraulic climbing formwork surrounding the upper portion of the same vertical pier, with workers observing from a secured platform. Depict the lifting system as orderly and mechanically coherent, without an invented operating sequence or numerical readouts. Tower crane remains to frame right. No text or logos. Subtle machinery ambience only.",
+      "seed": 4103,
+      "fact_ids": [
+        "F3"
+      ],
+      "source_path": "/path/to/workflow/output/douyin_v3_2_20261001/gpu6_raw.mp4",
+      "source_start": 0
+    },
+    {
+      "id": "S04",
+      "camera": "Over-the-shoulder close view of a monitoring station",
+      "duration_seconds": 4,
+      "prompt": "AI editorial illustration. A builder watches a schematic monitoring display for climbing-formwork lifting synchronization; show simple aligned indicators with no values, alerts or product branding. Through the opening beyond, the same pier and right-side tower crane retain their positions. Calm, focused hand movement; no text or logos. Soft control-room ambience only.",
+      "seed": 4104,
+      "fact_ids": [
+        "F4"
+      ],
+      "source_path": "/path/to/workflow/output/douyin_v3_2_20261001/gpu7_raw.mp4",
+      "source_start": 0
+    },
+    {
+      "id": "S05",
+      "camera": "Three-quarter close view beside the pier",
+      "duration_seconds": 4,
+      "prompt": "AI editorial illustration. A laser scanning device faces the same high pier; a restrained point-cloud visualization of the pier appears as a clearly illustrative overlay beside a simplified BIM model. Keep their geometry consistent with the physical structure, without invented measurements, labels or claims of a specific result. Tower crane remains on the right. No text or logos. Light site ambience only.",
+      "seed": 4105,
+      "fact_ids": [
+        "F5"
+      ],
+      "source_path": "/path/to/workflow/output/douyin_v3_2_20261001/gpu4_raw.mp4",
+      "source_start": 0
+    },
+    {
+      "id": "S06",
+      "camera": "Ground-level medium view toward the crane and pier",
+      "duration_seconds": 4,
+      "prompt": "AI editorial illustration. Show a builder operating a ground-based remote-control station for the smart tower crane; the crane stands on frame right beside the same pier. Keep the crane stationary and the controls generic, with no branded interface, numerical display or implied completed lift. No text or logos. Natural site ambience only.",
+      "seed": 4106,
+      "fact_ids": [
+        "F6"
+      ],
+      "source_path": "/path/to/workflow/output/douyin_v3_2_20261001/gpu5_raw.mp4",
+      "source_start": 0
+    },
+    {
+      "id": "S07",
+      "camera": "Wide lateral view across the valley",
+      "duration_seconds": 4,
+      "prompt": "AI editorial illustration. Pull back across the valley to show the same high pier, its upper formwork and the tower crane on the right in one coherent composition. Small builders at the work area provide human scale; hold on the collective work without suggesting an unverified completion milestone. Clear structural lines, no text or logos. Wind and distant machinery ambience only.",
+      "seed": 4107,
+      "fact_ids": [
+        "F1",
+        "F3",
+        "F6"
+      ],
+      "source_path": "/path/to/workflow/output/douyin_v3_2_20261001/gpu6_raw.mp4",
+      "source_start": 0
+    },
+    {
+      "id": "S08",
+      "camera": "Distant static wide view from the opposite hillside",
+      "duration_seconds": 3,
+      "prompt": "AI editorial illustration. A quiet final view of the same bridge construction setting: the high pier stands against the valley, formwork at its upper section and tower crane still to the right. Hold the frame with open sky and restrained warm light; do not depict a finished or opened bridge. No text or logos. Natural wind ambience only.",
+      "seed": 4108,
+      "fact_ids": [
+        "F1",
+        "F2"
+      ],
+      "source_path": "/path/to/workflow/output/douyin_v3_2_20261001/gpu7_raw.mp4",
+      "source_start": 0
+    }
+  ],
+  "narration": [
+    {
+      "start": 0,
+      "end": 2.8,
+      "text": "高墩耸立山谷。",
+      "fact_ids": [
+        "F1"
+      ],
+      "audio_path": "/path/to/workflow/output/production/planning_preview/tts_0_db7f92a961930728.mp3"
+    },
+    {
+      "start": 3,
+      "end": 6.8,
+      "text": "117米高，线形毫米级。",
+      "fact_ids": [
+        "F1",
+        "F2"
+      ],
+      "audio_path": "/path/to/workflow/output/production/planning_preview/tts_1_9f720866f93f697c.mp3"
+    },
+    {
+      "start": 7,
+      "end": 10.8,
+      "text": "向上施工，采用的是液压爬模工艺。",
+      "fact_ids": [
+        "F3"
+      ],
+      "audio_path": "/path/to/workflow/output/production/planning_preview/tts_2_0633add0b655366a.mp3"
+    },
+    {
+      "start": 11,
+      "end": 14.8,
+      "text": "智能爬模，监测顶升时的同步偏差。",
+      "fact_ids": [
+        "F4"
+      ],
+      "audio_path": "/path/to/workflow/output/production/planning_preview/tts_3_1eca879b4473f156.mp3"
+    },
+    {
+      "start": 15,
+      "end": 18.8,
+      "text": "激光雷达与BIM点云。",
+      "fact_ids": [
+        "F2",
+        "F5"
+      ],
+      "audio_path": "/path/to/workflow/output/production/planning_preview/tts_4_f42b29392dccb543.mp3"
+    },
+    {
+      "start": 19,
+      "end": 22.8,
+      "text": "智能塔机能远程驾驶，在地面操控。",
+      "fact_ids": [
+        "F6"
+      ],
+      "audio_path": "/path/to/workflow/output/production/planning_preview/tts_5_80c912b1f1163d3e.mp3"
+    },
+    {
+      "start": 23,
+      "end": 26.8,
+      "text": "一座高墩背后，是建设者对每一步的认真。",
+      "fact_ids": [
+        "F1",
+        "F2"
+      ],
+      "audio_path": "/path/to/workflow/output/production/planning_preview/tts_6_2ef0580891854c11.mp3"
+    },
+    {
+      "start": 27,
+      "end": 29.1,
+      "text": "高处求精。",
+      "fact_ids": [
+        "F1",
+        "F2"
+      ],
+      "audio_path": "/path/to/workflow/output/production/planning_preview/tts_7_516f2fa44f96be19.mp3"
+    }
+  ],
+  "music": {
+    "path": "/path/to/workflow/output/douyin_v3_2_20261001/music_bed.wav",
+    "license_note": "既有V3.2样片音乐，用于流水线内测；对外发布前核对原曲许可。"
+  },
+  "voice": {
+    "name": "zh-CN-YunjianNeural",
+    "pitch": "-18Hz",
+    "rate": "+0%"
+  },
+  "mode": "fresh_api_script_and_tts_with_reused_visual_assets",
+  "review_mode": "manual",
+  "sound_effects": [
+    {
+      "path": "/path/to/workflow/output/douyin_v3_2_20261001/original_foley.wav",
+      "start": 0,
+      "duration_seconds": 30,
+      "gain_db": -3
+    }
+  ]
+}

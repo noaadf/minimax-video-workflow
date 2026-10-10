@@ -1,0 +1,16 @@
+{
+  "provider": "robo",
+  "transport": "anthropic_messages",
+  "base_url": "https://ai-api.d-robotics.cc",
+  "api_key_env": "ROBO_API_KEY",
+  "shell_settings_source": {
+    "path": "~/.zshrc",
+    "function": "claude-robo"
+  },
+  "model": "deepseek-v4-pro[1m]",
+  "supports_images": false,
+  "stream": true,
+  "timeout_seconds": 60,
+  "total_timeout_seconds": 180,
+  "enabled_in_production": false
+}

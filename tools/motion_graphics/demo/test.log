@@ -1,0 +1,27 @@
+test_all_layouts_render_and_final_half_second_is_frozen (__main__.RenderingTests.test_all_layouts_render_and_final_half_second_is_frozen) ... ok
+test_comparison_result_enters_with_cards_and_is_complete_at_half (__main__.RenderingTests.test_comparison_result_enters_with_cards_and_is_complete_at_half) ... ok
+test_endpoint_number_is_inside_chart_even_for_wide_values (__main__.RenderingTests.test_endpoint_number_is_inside_chart_even_for_wide_values) ... ok
+test_first_visible_number_frame_starts_at_zero (__main__.RenderingTests.test_first_visible_number_frame_starts_at_zero) ... ok
+test_result_panels_anchor_lower_third (__main__.RenderingTests.test_result_panels_anchor_lower_third) ... ok
+test_reveal_changes_pixels_and_is_deterministic (__main__.RenderingTests.test_reveal_changes_pixels_and_is_deterministic) ... ok
+test_trend_ten_percent_has_growing_line (__main__.RenderingTests.test_trend_ten_percent_has_growing_line) ... ok
+test_bad_emphasis_type_is_a_schema_error (__main__.SchemaTests.test_bad_emphasis_type_is_a_schema_error) ... ok
+test_cli_preserves_existing_output_and_reports_bad_input (__main__.SchemaTests.test_cli_preserves_existing_output_and_reports_bad_input) ... ok
+test_duration_rounds_to_nearest_frame (__main__.SchemaTests.test_duration_rounds_to_nearest_frame) ... ok
+test_final_hold_and_duration_overrun (__main__.SchemaTests.test_final_hold_and_duration_overrun) ... ok
+test_implicit_title_also_reserves_entrance_time (__main__.SchemaTests.test_implicit_title_also_reserves_entrance_time) ... ok
+test_invalid_layout_and_wrong_kind (__main__.SchemaTests.test_invalid_layout_and_wrong_kind) ... ok
+test_missing_contract_fields (__main__.SchemaTests.test_missing_contract_fields) ... ok
+test_missing_kind_specific_fields (__main__.SchemaTests.test_missing_kind_specific_fields) ... ok
+test_negative_nonfinite_and_boolean_time (__main__.SchemaTests.test_negative_nonfinite_and_boolean_time) ... ok
+test_only_declared_comparison_group_may_overlap (__main__.SchemaTests.test_only_declared_comparison_group_may_overlap) ... ok
+test_overlap_and_duplicate_persistent_slot (__main__.SchemaTests.test_overlap_and_duplicate_persistent_slot) ... ok
+test_precise_data_is_not_silently_rounded (__main__.SchemaTests.test_precise_data_is_not_silently_rounded) ... ok
+test_process_capacity (__main__.SchemaTests.test_process_capacity) ... ok
+test_unsorted_reveals_are_valid (__main__.SchemaTests.test_unsorted_reveals_are_valid) ... ok
+test_zero_comparison_and_negative_trend (__main__.SchemaTests.test_zero_comparison_and_negative_trend) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 3.643s
+
+OK

@@ -1,0 +1,97 @@
+{
+  "limit": 6,
+  "require_engagement_review": true,
+  "style_library_file": "/path/to/workflow/research/reference_study/full_style_recipes.json",
+  "music": {
+    "path": "/path/to/workflow/output/douyin_v3_2_20261001/music_bed.wav",
+    "license_note": "既有样片配乐，仅用于本地流水线验收；对外发布需确认许可。"
+  },
+  "requirements": "具体悬念开场，技术细节有来源，每镜有明确目的、动作结果和切镜理由；按分配的声音样板改变叙述方式与配乐，结尾保留余音；问题便于观众根据经验说出理由。 面向普通观众：开场有具体反差，中段用场景说明突破，结尾昂扬并引导真实评论；优先昇腾、DeepSeek。少用专业参数，不做教程。 可从官方公众号、品牌推送、人物报道提炼故事：人物遭遇、关键选择、具体行动、真实结果；把抽象宣传转成观众能理解的场景。 内容必须有不同事件、矛盾或观点，禁止同一事实换标题重复出片。花江峡谷大桥暂停新增。口播自然，避免机械播报和故意压低音色。 最后一句结束后留至少2秒音乐余韵，配乐在旁白下持续不断。 核心事实不偏离即可；允许比喻、情绪、观点和原创衔接，不要求逐句贴原文，不因轻微措辞反复返工。 先写剧情事件链，再写结构化分镜与角色/道具状态；切回原场景状态必须连续。动作镜头生成前取得首尾关键帧，实际配音与关键帧粗剪审查通过后才能调用视频模型，禁止重复旧镜头凑剧情。 画面优先自然实拍观感，中性白平衡与克制饱和度，肤色和材质真实；避免统一金黄夕阳、青橙滤镜、浓艳广告色和HDR光晕。",
+  "backend_file": "/path/to/workflow/research/ascend_worker_pool32.json",
+  "audiovisual_library_file": "/path/to/workflow/research/reference_study/audiovisual_profiles.json",
+  "quality_profile": "throughput_v1",
+  "daily_target": 30,
+  "max_material_repairs": 1,
+  "cosmetic_repairs": 0,
+  "duration_policy": {
+    "mode": "content_driven",
+    "min_seconds": 15,
+    "max_seconds": 120,
+    "guidance": "内容决定时长，讲清楚就结束；不凑秒数、不固定字数，保留有力收尾和音乐余音。"
+  },
+  "editorial_backlog_target": 30,
+  "topic_mix": {
+    "ascend": 12,
+    "deepseek": 12,
+    "other_current_affairs": 6
+  },
+  "audience": "普通大众，不是开发者",
+  "editorial_tone": "昂扬、自信、有冲击力，突出中国团队的努力、突破和对普通人的意义；少讲参数与编程。修辞有气势，事实有证据，不虚构纪录、竞争对手恐慌或国外称赞。",
+  "freshness_policy": {
+    "breaking_max_age_days": 2,
+    "context_max_age_days": 30,
+    "dates_must_be_explicit": true
+  },
+  "reference_policy": {
+    "domestic_and_overseas": true,
+    "adaptation": "original narration inspired by verified narrative structure; no translated copying",
+    "popularity": "record observed metrics and retrieval time; never infer virality from title"
+  },
+  "editorial_source_types": [
+    "official_news",
+    "official_wechat",
+    "brand_campaign",
+    "official_push",
+    "profile_reporting",
+    "creator_structure_reference"
+  ],
+  "adaptation_routes": {
+    "official_wechat": "提炼明确事件、人物和生活场景；营销评价保留归属，查清日期，原创改写口播。",
+    "brand_campaign": "产品或品牌推送转成问题—行动—变化；不复述广告参数表，不虚构销量、纪录或竞争对手反应。",
+    "profile_reporting": "人物—困难—关键选择—行动—结果；人物经历、对话、身份只用来源支持的信息，AI重现场景明确标识。"
+  },
+  "novelty_policy": {
+    "enabled": true,
+    "script_overlap_limit": 0.72,
+    "paused_subjects": [
+      "花江峡谷大桥"
+    ],
+    "same_protagonist_allowed": true
+  },
+  "voice_policy": {
+    "max_tempo": 1.08,
+    "natural_pitch": true,
+    "guidance": "自然讲述，句子有长短和停顿，不强压低音，不挤字；结尾坚定但不喊口号。"
+  },
+  "script_review_policy": {
+    "mode": "core_facts_creative_expression",
+    "allow": [
+      "original_metaphors",
+      "emotion",
+      "subjective_opinions",
+      "transitions",
+      "clearly_hypothetical_scenes"
+    ],
+    "block": [
+      "material_factual_contradiction",
+      "fabricated_event_or_person_quote",
+      "wrong_core_numbers_or_results"
+    ],
+    "minor_wording": "advisory_only",
+    "literal_source_match_for_creative_narration": false
+  },
+  "pacing_policy": "storyboard_v1",
+  "caption_policy": "speech_aligned_v1",
+  "storyboard_rollout": {
+    "enabled": true,
+    "version": "storyboard_v1",
+    "preflight_required": true,
+    "new_plans_only": true,
+    "status_file": "/path/to/workflow/output/production/storyboard_rollout/status.json"
+  },
+  "visual_style_policy": {
+    "style": "natural_documentary_v1",
+    "guidance": "自然实拍观感：中性白平衡、克制饱和度、自然肤色与材质、柔和现场光、中等反差；不用默认金黄夕阳、青橙滤镜、广告式浓艳和HDR光晕。AI画面仍需明确标识。",
+    "existing_videos": "逐镜校色先预览；不对所有素材统一强行降饱和，不覆盖已批准版本。"
+  }
+}

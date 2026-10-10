@@ -1,0 +1,142 @@
+{
+  "base_size": [
+    720,
+    1280
+  ],
+  "effects": {
+    "shadow_offset_plane_px": [
+      3,
+      4
+    ],
+    "shadow_blur_radius_plane_px": 1.8,
+    "default_shadow": 0.28,
+    "ao_strength": 0.1,
+    "ao_blur_radius_plane_px": 0.85,
+    "r1_baseline": "original text + light match + warp, without shadow/AO",
+    "detail_scale": 3
+  },
+  "examples": [
+    {
+      "mode": "signboard",
+      "text": "义乌国际商贸城",
+      "quad": [
+        [
+          111,
+          284
+        ],
+        [
+          618,
+          309
+        ],
+        [
+          612,
+          410
+        ],
+        [
+          111,
+          382
+        ]
+      ],
+      "font_size": 62,
+      "color": "#E8C468",
+      "shadow": 0.28,
+      "actual_font_size": 62,
+      "font": "/System/Library/Fonts/STHeiti Medium.ttc",
+      "plane_size": [
+        505,
+        100
+      ],
+      "sample_luminance": 0.2748172984835988,
+      "lighting_gain": 0.8192074745109522,
+      "sha256": "34d3f845824068c0f82ba01705d22a14f95e6305d4fc1a301e436827c7057733"
+    },
+    {
+      "mode": "label",
+      "text": "设备铭牌\n额定电压 220V",
+      "quad": [
+        [
+          118,
+          481
+        ],
+        [
+          275,
+          482
+        ],
+        [
+          275,
+          568
+        ],
+        [
+          118,
+          567
+        ]
+      ],
+      "font_size": 25,
+      "color": "#E7E6D7",
+      "shadow": 0.28,
+      "actual_font_size": 18,
+      "font": "/System/Library/Fonts/STHeiti Medium.ttc",
+      "plane_size": [
+        157,
+        86
+      ],
+      "sample_luminance": 0.44487058823529413,
+      "lighting_gain": 0.8734547552151596,
+      "sha256": "6d8309cbcec34b40d963910c58336cafda940e57585ab34d4983ad600e568817"
+    },
+    {
+      "mode": "screen",
+      "text": "STATUS: READY\nTEMP  24.6 C\nLINK  ONLINE",
+      "quad": [
+        [
+          470,
+          678
+        ],
+        [
+          620,
+          680
+        ],
+        [
+          614,
+          785
+        ],
+        [
+          470,
+          782
+        ]
+      ],
+      "font_size": 21,
+      "color": "#99EFCB",
+      "shadow": 0.28,
+      "actual_font_size": 16,
+      "font": "/System/Library/Fonts/SFNSMono.ttf",
+      "plane_size": [
+        147,
+        105
+      ],
+      "sample_luminance": 0.13850735657085086,
+      "lighting_gain": 0.7614229906657006,
+      "sha256": "899b39a4ea83200140b7f354917e2c79d0d091c451a5d01573714e4c20513935"
+    }
+  ],
+  "artifact_sha256": {
+    "base_signboard.png": "f491f2de5b518a692e96589ecbf3c2a306cd8f62b868867a069ac777682cb981",
+    "contact_sheet.png": "09232425496313a701dc2f9189ef7be83b8965e3f388c3ab50f159ae46b40254",
+    "label.png": "6d8309cbcec34b40d963910c58336cafda940e57585ab34d4983ad600e568817",
+    "label_comparison.png": "43505196c70247e580dd18bf696e086c856d1c5d6958135ae8d15747ff16f1e3",
+    "label_r1.png": "15cd887df16cb434da82f2e545ac805107a661c542a5dc6f048b3a66f59924ec",
+    "label_r2_comparison.png": "b4d2620ec407cde3f02966046e5f5de682067ae2880b7d09673669503634c3c8",
+    "label_r2_detail.png": "6fd939f4f0474c3078e6cb17b020760c1d58878cf9e5ed89e221e32974e1429d",
+    "r2_contact_sheet.png": "27d109915bf3147ad5c76d352ada685e7b9b4c859101ac289a031c75e09eda5f",
+    "screen.png": "899b39a4ea83200140b7f354917e2c79d0d091c451a5d01573714e4c20513935",
+    "screen_comparison.png": "633f2cc2beb18e9d3cfc16020ebe23488eb4413d456c3449a468425745016685",
+    "screen_r1.png": "2fb03c7026f74f1bb9687e683ce764af3a7bc43215a2081dca3eb4d1f5b30d36",
+    "screen_r2_comparison.png": "5b629d473f0f736daef03add32ee1b6b6a6de1fdeef766007b8290576fdfa435",
+    "screen_r2_detail.png": "41b5dbb6e50d3e0157bc211bab88470ee451f42e38d5e9bf325c7f46566587f0",
+    "signboard.png": "34d3f845824068c0f82ba01705d22a14f95e6305d4fc1a301e436827c7057733",
+    "signboard_comparison.png": "738816b72bcabac523ed4c45a293bce79f91b032332a7d9a7714d03321eb5525",
+    "signboard_r1.png": "383dd36b9723d541019292723b4ea2d256a958ada70eafbcf68098ecb66f640e",
+    "signboard_r2_comparison.png": "5e730b4257a94497036fab88762d991b853088552d7dfd9c2c40676f0218a4df",
+    "signboard_r2_detail.png": "972b1d69399834053eb18abb7c1f58ab7bd7a820e9238f0ff506b51a0e742a51"
+  }
+}

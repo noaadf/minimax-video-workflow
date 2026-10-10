@@ -1,0 +1,98 @@
+[
+  {
+    "layout": "stat_highlight",
+    "stage": "cards",
+    "frame_index": 37,
+    "actual_seconds": 1.5416666666666667
+  },
+  {
+    "layout": "stat_highlight",
+    "stage": "cards",
+    "frame_index": 39,
+    "actual_seconds": 1.625
+  },
+  {
+    "layout": "stat_highlight",
+    "stage": "cards",
+    "frame_index": 44,
+    "actual_seconds": 1.8333333333333333
+  },
+  {
+    "layout": "stat_highlight",
+    "stage": "cards",
+    "frame_index": 60,
+    "actual_seconds": 2.5
+  },
+  {
+    "layout": "stat_highlight",
+    "stage": "result",
+    "frame_index": 97,
+    "actual_seconds": 4.041666666666667
+  },
+  {
+    "layout": "stat_highlight",
+    "stage": "result",
+    "frame_index": 100,
+    "actual_seconds": 4.166666666666667
+  },
+  {
+    "layout": "stat_highlight",
+    "stage": "result",
+    "frame_index": 104,
+    "actual_seconds": 4.333333333333333
+  },
+  {
+    "layout": "stat_highlight",
+    "stage": "result",
+    "frame_index": 120,
+    "actual_seconds": 5.0
+  },
+  {
+    "layout": "comparison",
+    "stage": "sync",
+    "frame_index": 32,
+    "actual_seconds": 1.3333333333333333
+  },
+  {
+    "layout": "comparison",
+    "stage": "sync",
+    "frame_index": 34,
+    "actual_seconds": 1.4166666666666667
+  },
+  {
+    "layout": "comparison",
+    "stage": "sync",
+    "frame_index": 39,
+    "actual_seconds": 1.625
+  },
+  {
+    "layout": "comparison",
+    "stage": "sync",
+    "frame_index": 56,
+    "actual_seconds": 2.3333333333333335
+  },
+  {
+    "layout": "trend",
+    "stage": "line",
+    "frame_index": 11,
+    "actual_seconds": 0.4583333333333333
+  },
+  {
+    "layout": "trend",
+    "stage": "line",
+    "frame_index": 14,
+    "actual_seconds": 0.5833333333333334
+  },
+  {
+    "layout": "trend",
+    "stage": "line",
+    "frame_index": 19,
+    "actual_seconds": 0.7916666666666666
+  },
+  {
+    "layout": "trend",
+    "stage": "line",
+    "frame_index": 40,
+    "actual_seconds": 1.6666666666666667
+  }
+]

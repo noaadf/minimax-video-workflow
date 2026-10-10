@@ -1,0 +1,13 @@
+{
+  "shot_id": "S04",
+  "duration_seconds": 8.296,
+  "layout": "stat_highlight",
+  "title": "单塔效率比较",
+  "reveals": [
+    {"t": 0.0, "kind": "title"},
+    {"t": 0.5, "kind": "stat", "text": "15 个传统萃取槽", "emphasis": "secondary"},
+    {"t": 1.5, "kind": "comparison", "left": {"label": "传统", "value": 15, "unit": "槽"}, "right": {"label": "单塔", "value": 1, "unit": "塔"}},
+    {"t": 4.0, "kind": "number_roll", "text": "萃取剂用量减少 40%", "from": 0, "to": 40, "suffix": "%"},
+    {"t": 7.0, "kind": "source_note", "text": "据研究所报道 · 任务卡原始示例"}
+  ]
+}

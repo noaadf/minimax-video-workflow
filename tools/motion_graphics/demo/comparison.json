@@ -1,0 +1,13 @@
+{
+  "shot_id": "D02",
+  "duration_seconds": 8.0,
+  "layout": "comparison",
+  "title": "同样产能，更少设备",
+  "reveals": [
+    {"t": 0.0, "kind": "title"},
+    {"t": 0.6, "kind": "stat", "text": "设备数量对比", "emphasis": "secondary"},
+    {"t": 1.3, "kind": "comparison", "left": {"label": "传统萃取槽", "value": 15, "unit": "槽"}, "right": {"label": "单塔系统", "value": 1, "unit": "塔"}},
+    {"t": 1.3, "kind": "number_roll", "sync_with": "comparison", "text": "设备数量减少约 93%", "from": 0, "to": 93, "suffix": "%"},
+    {"t": 6.7, "kind": "source_note", "text": "演示数据 · 15 槽与 1 塔的数量对比"}
+  ]
+}

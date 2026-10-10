@@ -1,0 +1,146 @@
+[
+  {
+    "layout": "stat_highlight",
+    "width": 540,
+    "height": 960,
+    "fps": 24,
+    "codec": "h264",
+    "pixel_format": "yuv420p",
+    "audio_streams": 0,
+    "frames": 199,
+    "requested_duration": 8.296,
+    "actual_duration": 8.291667,
+    "bytes": 3985943,
+    "final_hold_frames": 12,
+    "decoded_hold_identical": true,
+    "decoded_hold_max_channel_difference": 0,
+    "review_frames": [
+      {
+        "path": "demo/stat_highlight_10.png",
+        "requested_percent": 10,
+        "frame_index": 20,
+        "actual_seconds": 0.8333333333333334
+      },
+      {
+        "path": "demo/stat_highlight_50.png",
+        "requested_percent": 50,
+        "frame_index": 100,
+        "actual_seconds": 4.166666666666667
+      },
+      {
+        "path": "demo/stat_highlight_90.png",
+        "requested_percent": 90,
+        "frame_index": 179,
+        "actual_seconds": 7.458333333333333
+      }
+    ]
+  },
+  {
+    "layout": "comparison",
+    "width": 540,
+    "height": 960,
+    "fps": 24,
+    "codec": "h264",
+    "pixel_format": "yuv420p",
+    "audio_streams": 0,
+    "frames": 192,
+    "requested_duration": 8.0,
+    "actual_duration": 8.0,
+    "bytes": 4876325,
+    "final_hold_frames": 12,
+    "decoded_hold_identical": true,
+    "decoded_hold_max_channel_difference": 0,
+    "review_frames": [
+      {
+        "path": "demo/comparison_10.png",
+        "requested_percent": 10,
+        "frame_index": 19,
+        "actual_seconds": 0.7916666666666666
+      },
+      {
+        "path": "demo/comparison_50.png",
+        "requested_percent": 50,
+        "frame_index": 96,
+        "actual_seconds": 4.0
+      },
+      {
+        "path": "demo/comparison_90.png",
+        "requested_percent": 90,
+        "frame_index": 173,
+        "actual_seconds": 7.208333333333333
+      }
+    ]
+  },
+  {
+    "layout": "process",
+    "width": 540,
+    "height": 960,
+    "fps": 24,
+    "codec": "h264",
+    "pixel_format": "yuv420p",
+    "audio_streams": 0,
+    "frames": 192,
+    "requested_duration": 8.0,
+    "actual_duration": 8.0,
+    "bytes": 5003937,
+    "final_hold_frames": 12,
+    "decoded_hold_identical": true,
+    "decoded_hold_max_channel_difference": 0,
+    "review_frames": [
+      {
+        "path": "demo/process_10.png",
+        "requested_percent": 10,
+        "frame_index": 19,
+        "actual_seconds": 0.7916666666666666
+      },
+      {
+        "path": "demo/process_50.png",
+        "requested_percent": 50,
+        "frame_index": 96,
+        "actual_seconds": 4.0
+      },
+      {
+        "path": "demo/process_90.png",
+        "requested_percent": 90,
+        "frame_index": 173,
+        "actual_seconds": 7.208333333333333
+      }
+    ]
+  },
+  {
+    "layout": "trend",
+    "width": 540,
+    "height": 960,
+    "fps": 24,
+    "codec": "h264",
+    "pixel_format": "yuv420p",
+    "audio_streams": 0,
+    "frames": 192,
+    "requested_duration": 8.0,
+    "actual_duration": 8.0,
+    "bytes": 4902930,
+    "final_hold_frames": 12,
+    "decoded_hold_identical": true,
+    "decoded_hold_max_channel_difference": 0,
+    "review_frames": [
+      {
+        "path": "demo/trend_10.png",
+        "requested_percent": 10,
+        "frame_index": 19,
+        "actual_seconds": 0.7916666666666666
+      },
+      {
+        "path": "demo/trend_50.png",
+        "requested_percent": 50,
+        "frame_index": 96,
+        "actual_seconds": 4.0
+      },
+      {
+        "path": "demo/trend_90.png",
+        "requested_percent": 90,
+        "frame_index": 173,
+        "actual_seconds": 7.208333333333333
+      }
+    ]
+  }
+]

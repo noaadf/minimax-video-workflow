@@ -1,0 +1,158 @@
+◆ 剧情与分镜管线
+
+新 plan/batch 默认 pacing_policy=storyboard_v1；已保存的旧计划按原规则执行。旧 pacing_policy=narrative_timed_v1/editorial_v2 仍可显式使用。
+
+任务顺序：voice、music → story_preflight → 每个 shot → compose → speech → quality → export。
+生产规划可以先落盘；缺关键帧时 batch 返回 awaiting_storyboard，submit 拒绝提交。补齐素材后再次 batch 使用缓存计划，不重写剧本。研究收件箱与消费服务识别并保留这个状态，素材未齐不消耗重试次数。
+
+◆ 计划合同
+story_contract 提供 central_question、story_one_sentence、protagonist、goal、obstacle、resolution、beats。
+每个 beat 有 id、caused_by（首个 null，其后引用上一节拍）、action、result。
+每个 shots[].storyboard 有 beat_id、scene_id、purpose、attention_target、action、result、cut_reason、state_before、state_after、transition。
+状态是具有相同键的对象，记录该场景的人物、货物、道具、运动状态。切回原场景时恢复账本；相同动作/结果/状态不能只换机位重复。同一已有视频的时间窗不能重复使用。
+transition.kind 是 establish/continuous/cutaway/return/ellipsis。时间省略仅在 explanation 非空、allowed_changes 精确等于实际变化字段时通过。
+
+◆ 参考图与粗剪
+previsual_path 指向起始关键帧；生成镜头 reference_images[0] 必须是同一文件。状态变化的动作镜头需要两张不同的首尾参考图；不变化的解释镜头需要一张。
+参考图必须与已验证后端的实际能力匹配；参考图不能被忽略后退化为纯文本生成。
+已有 source_path 片段在粗剪中按真实时长播放；新生成镜头用首尾静帧构成 animatic。静帧粗剪不是完整运动证据。
+production_mode=deterministic_graphic 的镜头必须先提供本地渲染的 source_path，避免把含字图示交给视频模型。
+story_preflight 输出 preview、EDL、有效计划、剧情审查、关键帧审查及哈希。文本与关键帧抽样审查不通过即阻断后续镜头。生成前视觉审查显式使用stage=preflight，仅检验计划、构图、首尾状态和来源；未生成的运动列为未验项目，不冒充动作验证。stage=final的成片检查与预检分开缓存。
+
+◆ 声音和字幕
+caption_policy=speech_aligned_v1。每段 narration 有完整文本守恒的 caption_chunks 和 caption_lines；最多两行，每行11字，不硬切词组。
+新 Edge 配音随同音频捕获 WordBoundary。cloud_ssh 模式在现有CPU SSH运行时使用独立版本文件，保持原配音服务；不申请加速器。实际远端“先装货，再固定。”测试已通过，音频与词时间哈希核对成功，生成两段对应字幕；证据在 output/production/storyboard_rollout/cloud_speech_canary/acceptance.json。
+提供旧音频时必须提供 word_timing_path：schema_version=1、method=edge_word_boundary/asr_estimate、script_text、source_path（绝对路径）、source_sha256、source_seconds、words[{text,start,end}]。ASR文本只用于对齐，字幕仍用确认台词。
+播放 tempo 会同步映射词时间；音频或时间文件改变会使依赖校验失效。新分镜配音不适合时间槽时，先调整分镜时间，禁止自动改台词后继续视频生成。
+locked_audio={path,sha256} 可指向包含已认可AAC音轨的 MP4/M4A，须覆盖完整时间线。粗剪与成片使用 -c:a copy，不重新混音或编码。仍保留独立 narration/music stems 用于质量检查。
+
+◆ 使用
+先检查：.venv-workflow/bin/python -m workflow story-check /absolute/path/manifest.json
+缺素材会报告 awaiting_storyboard。齐备后沿用原 submit/run 入口。
+纯本地粗剪：.venv-workflow/bin/python -m workflow.roughcut /absolute/path/config.json --out /absolute/new/folder
+新工作进程加载更新后的源码；已运行的旧进程不具备热加载。
+
+◆ 验收边界
+成片对所有新分镜做 action_result/state_continuity 检查，要求首尾实际抽样时间证据，并附较高分辨率首尾图；无法看到动作或结果就返回 review。抽样审查不能证明连续运动、完整听感或观众偏好。发布仍由既有流程处理。
+◆ 已上线入口
+生产配置 workflow/config/production.json 已启用 storyboard_v1。产品页的“剧情与分镜”入口为 http://127.0.0.1:8768/pipeline，展示首尾帧、明确区分静帧/实际镜头的粗剪和只读队列进度；生成完但质量不合格显示返修。
+缺素材的 batch 同时生成哈希绑定的 .keyframes.json 制作清单；只包含当前缺失的镜头。已提供素材不重做，已有视频缺预览时提取真实源帧。
+现有唯一 scripts/run_user_repair30.py 控制器消费 storyboard_rollout/deployment_request.json。入口校验当前产品身份、叙事/视觉审查、冻结粗剪输入和来源，沿用原锁与队列；新版完整自动检查通过后才更新原产品卡，旧版保留。
+三轮车有10镜头、50.476秒、18张首尾帧和本地图示。R5完整动作修复保留了原始生成片尾并逐字节保持认可的音轨，但成片审核未通过；不能作为完成版本。R6修订已通过剧情/规划视觉审核，但生产入口重复审核使它在生成前被拦住，未生成任何新镜头。R7仅增加冻结预检证据复用：核对相同剧情、图像、EDL、音轨字节与真实模型凭据后接纳。仍只重做A05/A06的跳变机位和工作人员行为，其余完整源片复用。执行版为 output/production/storyboard_rollout/production_manifest.r7.json，仍需最终逐镜与整片检查。
+实际状态以 output/production/storyboard_rollout/status.json、deployment_request.json 及 queue.sqlite 为准，不能据本说明宣布成片完成。
+automation-5 在本对话每小时持续跟进；已有镜头生成时不启动重复控制器，不重启在途任务，不把自动抽样通过当成人工完整观看验收。
+
+◆ 动作时长与定向返修
+生成分镜使用whole_action_v1，按实际源视频时长进行有界变速，保留动作首尾；超过1.5倍速范围先改时间槽。禁止裁掉结尾或冻结补齐后宣称结果可见。已有完整源视频可显式source_fit_policy=whole_action；默认source_window旧行为保留。
+返修只针对已记录的画面问题，保留quality原件、源视频哈希、失败审查和版本。格式失败与真实缺陷分开：时间证据必须复制实际PTS，JSON后不允许附加文字，不能降低0.85置信度或删除中/高问题来放行。只有所有动作/状态及交付门槛通过才更新原卡。
+
+◆ 冻结预检复用
+approved_story_preflight={path,sha256} 指向已通过的预检acceptance。入口及story_preflight再次核对acceptance、有效计划、预览、EDL、视觉审查哈希，require_review文本凭据，stage=preflight真实模型和0.85门槛，所有作者字段、EDL实际画面及冻结输入、生产声音与已审音轨字节。任一变化拒绝复用；完全相同时不再次发模型调用。只允许运行时路径规范化、产品版本元数据差异，不允许变更动作、台词或事实。复用receipt保留原始审查而不抹去失败历史。renderer_runtime.json记录实际已加载的story_preflight_version，旧worker不能据磁盘新文件宣称已部署。
+
+◆ 最新有限返修
+R7已完成真实生成与合成：A05/A06定向返修通过；A03/A04/A07/A10亦通过，A01/A02/A08/A09动作/状态置信度不足，产品R3保留。详情final_review_status.r7.json。
+本轮仅修复A03图示字幕避让：说明文字移至上方、提高字号/对比度，底部留给黄字幕。脚本diagram()拒绝覆盖非空目录，必须新目录生成；旧冻结图示不变。局部候选diagram_caption_repair_r7/compose/video.mp4技术通过且原AAC字节相同，已用于待验收预览。专项视觉调用上游HTTPError失败；不算审核通过、不提交新队列、不修改旧quality结果。下一步按next_steps.json检查未通过动作中的一镜；不重复已通过检查。
+
+◆ A02注意目标有限修订
+2026-10-03 06:47轮：检查R7量箱实片后，准备固定裁切候选a02_attention_repair_r7；全95帧PTS保留、字幕程序不变、认可AAC逐字节相同，技术通过。尺带端点放大约1.82倍；背景工人出画，保留完整源片作为状态证据。仍未获新构图规划/最终审核，未提交队列，也未把局部裁切当作剧情验收。只读发现其他流程已将同一产品更新到R8自然色，当前控制器99011/renderer99015；本候选独立保留，不覆盖当前卡。后续先核对最新产品绑定，再决定整合，禁止重复裁切或重跑六个已通过镜头。
+
+◆ A02修订抽样审查
+2026-10-03 07:47轮：a02_attention_repair_r7的改变构图版本只调用一次shot-review-v3-explicit-endpoint-evidence，五项均pass且置信度>=0.85，无中/高问题；真实首尾PTS、首尾大图与当前候选manifest哈希绑定。保留低字幕标点不确定性与画外工人未验限制，不改旧quality，不重复其他镜头。模型凭据与路径在scoped_review_attempt.json。整体仍未放行：该独立候选未应用当前R8自然色/字幕方案，改变A02/A03参考图使旧预检不可复用；A01/A08/A09及完整交付仍待验收。共享生产入口本轮已转为藏羚羊任务，本轮不覆盖请求或status、不启动控制器。
+
+◆ A01单箱动作设计失败记录
+2026-10-03 08:47轮：检查实际77帧全源及原首尾图，发现初始箱距过小且两箱位置均变。proposed_shot.json明确仅移动前景小箱、高箱固定；一次imagegen起始编辑及一次有界修正均未建立明确向车斗推近的距离，草图全部拒绝，见a01_action_design_r7/asset_attempt_receipt.json。未生成新视频、未改旧素材/quality/共享请求/产品卡；A01仍未验收，A02已过检查保留。必须先完成可靠新首尾图及相邻连续性、规划和真实音轨粗剪审查，才能请求运动生成。
+
+◆ A08工作台特写有限修订
+2026-10-03 09:48轮：a08_attention_repair_r7仅裁切已有完整放扳手动作，保留79帧全部PTS和认可AAC；技术通过。唯一v3最终抽样调用显示动作/状态0.85，结构0.80，严格保持review，不重新抽签。字幕低问题与原词时间核对：最后词估计35.662秒，字幕35.66秒，旁白事件36.658含余量；不据此改认可音轨，不删除原提示，实际听感仍未验。未改原产品R8、共享请求或status，未新增运动生成/控制器/资源；A01/A08/A09及整片交付仍待验收。
+
+◆ A09实际尾状态与计划冲突
+2026-10-03 10:49轮：检查A09源片158帧中的38张真实帧（含0和157，尾PTS6.541667）及转身段加密抽样。当前R8成片n1043/PTS43.458333也显示手仍放在箱上、头朝门口；并非JSON或单纯置信度问题。A09_end与A10_start逐字节相同，同样违背收手转向的作者动作。新增中等问题与证据保存在a09_motion_inspection_r7/inspection_receipt.json，原quality及六镜通过记录不改。只修A09尾图会导致A10起始跳接；后续先解决共享边界资产/连续性，再做真实配音粗剪与绑定规划审查。未改素材、音轨、产品R8、队列或共享请求，零模型调用/运动生成/新资源；不能重跑审核凑通过。
+
+◆ A09/A10共享边界草图
+2026-10-03 11:49轮：只对共享收手/转向边界做一次内置imagegen局部编辑。a09_a10_boundary_design_r7/shared_boundary.draft1.png显示双手离箱、头朝屏幕左侧驾驶位，用作A09尾/A10首的同一规划草图；本地目视保留两箱、绑带、车辆及门口工人，未获正式规划/运动审核。boundary_plan.json保持作者动作/状态/机位/时长和R8音轨/呈现方案。A10真实首帧扶箱，不能把旧通过结果套用于将来的改版；旧审核仍保留、不重跑。本轮零新运动任务/队列变更/产品变更，新控制器由其他流程更换为99013/99017，锁读回同一inode；当前共享请求为确山小提琴，未覆盖。下一项是共享边界的真实原音轨粗剪及绑定规划审查。
+
+◆ A09/A10原音轨规划粗剪与几何门槛
+2026-10-03 12:50轮：a09_a10_boundary_preflight_r8_pts_fixed复用当前R8前八镜和原字幕/自然色方案，A09/A10明确为首尾静帧，AAC逐字节保持。初次拼接实际PTS重复且最大漂移0.125秒；在新目录一次setpts修正保留1211帧，严格递增，首0/尾50.416667，旧失败及旧receipt保留并注明exit-code技术旗标不足。只调用一次preflight边界审查4907700a90aa6068d505d2608f97fcfb19cfee0b8f7991b9ede2e5097bd01b86；动作规划0.86、边界0.88、字幕构图0.85、几何0.82，保持规划hold；无JSON/API错误，无新具体几何缺陷，不能原图重新抽签。全部低问题保留，新manifest文本审查绑定仍待，原六镜结果/产品R8/共享请求未改，零运动生成/控制器/新资源。后续需具体新证据才重审这处几何，先推进独立A01可见位移设计，不重复A02/A08或已过动作检查。
+
+◆ A01新几何草图与HTTP诊断上线
+2026-10-03 用户追问进度后：不能以每轮一项为写完计划就停止的理由，继续同一返修链。本次a01_geometry_design_v2用明确位置示意制作一张新起图，小箱进入下方前景、高箱保持，真实大地面间隔可见；未按示意精确坐标落位，保留此限制。原音轨粗剪1211帧/PTS/完整解码/AAC通过。唯一规划调用c5e32d1649f861f4c908e34d727bfc0c0aaf53bc7d1bdc0628e2068ecd14aee3在上游HTTPError失败，无模型答案。只读确认远端日志0字节且未保存HTTP码，旧具体原因不能还原。已修复workflow/cloud_llm.py并在现有rpc_20261002代码上仅补同一诊断逻辑，cloud-http-diagnostic-v1远端导入读回、HTTP429模拟及15项本地回归通过；保留远端原有其他逻辑/备份，不重启控制器、不另起worker、不新增NPU/资源、不重放旧失败。A01规划仍待，A08/A09严格hold及旧quality/产品R8保持，不能宣称剧情成片已充分改进或交付。证据a01_geometry_design_v2/outcome.json及diagnostic_deployment_receipt.json。
+
+2026-10-03 13:59：新A01几何设计的独立manifest fc0421991f2db13b522de9be70a3d44a1260bb8e8121abcb28dae8835f866afe 完成此前缺失的剧情文本审核：narrative_binding/review.json，六项通过，无问题，唯一任务d4ab73d02e32e7aef1a102b33cb601b86e0dcff8f0febfcd17c15e4977c59cf7。未重跑画面审查或已通过动作检查。文本调用成功仅证明本次文本服务可用；现有视觉历史有相同模型、4张且7.54MB请求成功，因此不能将旧6.60MB视觉HTTP失败武断归因模型/大小。旧请求无状态码，仍不可盲重放。真实AAC粗剪不重做；原R7质量SHA不变。A01画面规划、A08 .80、A09/A10几何 .82及整合后成片审核继续保留阻塞；无新运动生成、队列/控制器/产品卡改动。
+
+◆ 用户批准后：A08实际首尾证据纠正
+2026-10-03：确认旧网格的末样本3.2083不是完整A08源片末帧3.250。新decoded-first-last-pts-v1按解码实际PTS覆盖完整首尾；候选成片A08区间真实全局33.625..36.875，对应本地0.023..3.273，原尺寸2160x1920首尾图。定向入口/manifest可选策略保留旧通过缓存，16项必要回归通过；唯一纠正任务382a1cd48bef63892b5e42f0945ba50c89696daca9853bfd656e165e523edd5e已返回，结构0.85、动作0.72、状态0.80，严格hold。保留2.15–2.44秒手遮槽口及字幕低问题；不能当作中高几何失败或再抽签。新侧面两指捏持/斜上收手/末一秒无遮挡动作设计保存a08_endpoint_evidence_correction/next_shot_design.json，必须新作者内容绑定预检后才生成。旧quality/素材/AAC/产品R8/共享请求不改，零新运动/控制器/资源。新证据代码在独立定向审查实际使用，尚未证明生产renderer加载此可选策略，不宣称部署完成。
+
+同轮继续推进A08新动作：material_preflight/preview.mp4绑定当前R8画面呈现与原AAC，1211帧首0/尾50.416666且严格帧网格；非新成片标签清楚。新manifest 03ac021df726f7a8bd562fce20f68349b5123e100ef64ea6f544935e68995e16的唯一文本审核a3952ec2bd951a8e14cf29a9e88b509c9269f65855b91bfd9b9f07bdbee5f908六项通过，保留两个次要意见。唯一规划调用b9193055f8d40626910defd855832844487db9ad6bf00994c5242a8d31225d0f只见原尺寸首尾图：可见性0.70、工具/手几何0.75、端点连续性0.75、旁白构图0.85，严格hold；环端被口袋遮蔽及手指可能遮槽口低问题保留。其not_assessed明确未审真实粗剪像素/音轨/EDL及未来动作，因此不当作完整preflight验收。需要有具体新证据的中间捏持/松手姿态，不能原图重审凑分数；无新运动或生产改动。
+
+◆ 继续迭代：A08四阶段分镜及声音/字幕时间边界
+2026-10-03：a08_release_midframe_v2新增半入槽中间帧，真实原声三阶段预览通过技术检查；唯一规划a3823293...几何0.85/路径0.82/状态0.80，不能放行。用下一帧PTS证明原24帧尾停留实际1.0s，保留旧model误按首尾PTS差0.958s的记录。一项有界素材纠正形成v3完全入槽后两指松开的姿态，四阶段原AAC预览、30帧尾停留实际1.25s，唯一规划3863fee09d262c6b642b83f4a4827511248962d4014c97af1744f1eb33587a3f：几何/首尾状态0.85，路径0.82、字幕构图0.80，仍hold。两张新规划图、两次不同证据调用（含一次有界纠正），零新运动、队列、控制器或产品改动。原剧情作者字段逐项相同，因此严格哈希重绑既有文本审查，无新文本模型调用。
+已定位反复字幕误判：原认可mix冻结B5及词cue匹配，ASR末词35.662，独立声轨-35dB尾静音35.664833开始；36.658是含留白的槽位端点。未修改字幕或音轨，不称已听审、不覆盖旧分数/问题。workflow/caption_timing.py新增review_evidence，decoded端点定向审查把词cue/源片SHA及槽位边界区别送入证据/缓存绑定，旧通过缓存策略不变；18项必要回归通过。生产renderer加载新证据字段尚无证明，不能称新版上线。此组A08不继续重审；没有明确新路径缺陷时先推进A09/A10独立未完成绑定/几何证据，保留0.85门槛及旧R8。详细outcome见a08_release_midframe_v3/outcome.json。
+
+◆ A09/A10缺失剧情绑定完成
+2026-10-03 15:07轮：冻结首尾规划manifest 34c5e93a58fdb990bfc711f069515cb6efbc36510285315ff5e805414ac8c9ab 完成此前未执行的唯一文本审查623d71e287352d25671ceb1be4a9617038953295d73da887f2a940bab46c953f，六项pass且无问题。43项冻结输入在调用前后SHA相同，认可AAC/current R8及原quality保留。仅剧情文本绑定通过；原边界画面几何0.82仍低于0.85，未重跑画面审查或制作粗剪，未生成运动/改队列/控制器/共享请求或产品卡。原receipt/binding_audit中的pending是历史快照，新结果见a09_a10_boundary_narrative_binding/outcome.json，不能把不同独立方案的文本pass拼成整片预检验收。下一步先查可具体定位的空间锚点或证据格式问题，没有新证据不再抽签；整合成片仍待。
+本轮审查等待期间，其他流程将控制器/renderer从57337/57354换为80754/80758；只读核对二者仍持FD3同一锁inode169195741、批次4/30，无在途任务。本轮未参与重启，未更改共享入口。新renderer记录预检verified-replay与whole_action_v1；runtime未明确证明定向decoded/caption证据策略已加载，仍不据磁盘源码宣布该策略部署。
+
+◆ A09/A10局部空间证据检查
+2026-10-03 16:07轮：a09_a10_geometry_anchor_inspection以原941x1672首尾/共享图生成五组1:1原像素局部对照，冻结源SHA与RGB差值，仅作屏幕坐标观测；不能将跟拍/视差下的像素变化判为车辆移动，也不能把数值当0.85验收。买家收手转向可见，车把在A10起图左缘仅部分可见，终图双手握把；中间走近/伸手的空间路径在端点图中没有直接证据。未发现支持修素材的新明确几何缺陷。门口工人抬手变放下，位置/朝向状态仍一致，记录次要姿态差异而不编造中高几何失败。原0.82拦截/文本六项pass/旧quality均保留；零模型调用/图像或运动生成/队列及产品变更。下一步若补空间证据，需真正新增中间走近/伸手规划姿态并绑定相同车辆和跟拍机位，不可把相同图裁切后再抽签凑分；静帧仍不是运动验收。唯一控制器22757/renderer22762持FD3同一锁inode169195741，批次4/30，无在途任务；本轮未重启或另起worker。
+
+◆ A10新增中间路径规划与镜面避让问题
+2026-10-03 17:08轮：a10_reach_midframe_v1在原A10终图机位/车辆下新增最后一步走近规划姿态。第一张已搭握把而拒绝，一次有界手部纠正使双手离握把，但近手投影接近镜顶；两草图及明确限制均保留。本次唯一新原声粗剪1211帧/PTS首0尾50.416667/完整解码/AAC逐字节相同，A09两阶段与A10三阶段均标静帧。初次脚本在字幕cue组装传dict而非list处TypeError，发生在技术断言之后、任何模型调用之前；保留旧目录/失败记录，仅在preflight_cue_fixed修正cue组装、复用同一preview不重渲染。末词47.468/槽位48.576的1.108秒留白及ASR非听审界限送入证据。作者字段逐项相同，原文本审核严格重绑，无新文本调用。唯一新规划a6cdd61a5b7d9ce4e5df30813366c028e6dd063f91ae9666e4870bd61365ed0a：路径review0.72、几何pass0.82、端点pass0.85、构图pass0.80；中等近手/镜顶重叠的空间避让不明、步未稳已伸手的低问题保留，不能放行。下一项有具体新证据支持：同一迈步时双手保持腰/髋低位，从镜子下方向原握把伸近，先落脚后握；本轮不再生成或抽签。原旧quality及通过A10实际检查不改，零运动生成/队列/控制器/共享入口/产品R8改动。
+
+◆ A10低手位纠正与规划/运动不确定性界限
+2026-10-03 18:09轮：a10_reach_midframe_v2只用一次内置imagegen把迈步中的双手降到腰/髋低位，保留同一机位/车辆/两箱/绑带/人物步态；新原声粗剪1211帧、首0/尾50.416666、完整解码/网格/AAC逐字节相同，作者字段与旧已审文本一致，严格重绑而无文本调用。唯一新规划5c49e5cdb19798f46bcec2b1c1783d43dbd8f02a20fd0df921c919512775aa6f明确观察旧镜顶重叠被修正；场景几何0.85，路径pass0.72、端点pass0.80、构图pass0.75仍不足0.85，全组hold。新finding仅低级抬手过渡未静帧覆盖/2D间隙不可证明实际3D运动，原中等问题记录和所有旧分数仍保存；不能因新图可见无重叠就放行动作。planning_scope_annotation只标出规划可行性与未来运动未测的范围混合，不改分数/门槛、不重抽签，不据缺未来运动任意再造姿态。下一步先核对阶段证据政策与整合manifest前提；无具体新问题不继续同组素材变体。原quality/六镜通过与当前R8保持，本轮无运动生成/生产队列/控制器/共享入口/产品修改。
+
+◆ 规划评分依据/延后运动检查的显式合约
+2026-10-03 19:10轮：检查发现生产editorial已有stage=preflight提醒，独立A10历史调用则直接ask_json；不能误称生产提示造成该次失败。实际缺口是答复未结构声明置信度依据，A10路径说明混合已可行规划与未来插帧/3D未测。新增独立workflow/planning_review_scope.py (planning-observable-basis-v1)：每项显式observable_basis/规划confidence_reasons，运动/听审仅deferred_checks；评分理由混入延后范围会保持review，不加分、不自动重审；低分<0.85与中高可见问题仍拦截。拒绝final/legacy结果重标，已有相同证据哈希即使改政策或标签也拒绝重新绑定。8项必要回归通过。新合约仅本地可选接口，未修改生产review.py/旧缓存、未接入或证明renderer加载；不据测试宣称上线。A10旧0.72/0.80/0.75及原quality保持；本轮零模型/图片/运动生成/粗剪重做/队列/控制器/产品变更。后续只对具体新证据或必要完整整合请求采用，不为换合约对原图再次抽签。审计planning_scope_contract_v1/audit_receipt.json。
+
+2026-10-03 20:30 +08 — A02 current-R8 deterministic integration (independent, not delivery)
+- a02_current_r8_integration_native444: 95 complete A02 motion frames from prior scoped-reviewed crop; current R8 grade before captions_clear.ass. All 1116 other native YUV444 decoded frames and all 1211 actual PTS are exactly retained; approved AAC packets equal; full decode passed.
+- Preserve failures: a02_current_r8_integration (concat microsecond timebase; 404 PTS differ by 1us), a02_current_r8_integration_pts_fixed (95 chroma pixel hashes differ after automatic 420→444→420; native R8 is 444). Final candidate uses native444 and explicit 1/12288 filter timebase.
+- No new model review, no original quality change, no source motion regeneration, no queue/product/request mutation or controller restart. Original A02 sampled assessment remains source evidence only; no automatic five-check acceptance of new color/caption binding. Current-R8 A03 unchanged; independent new A03 labels not included.
+- Exact candidate planning/presentation, A01/A08/A09 and changed A10 holds, whole-film and delivery gates remain. Local scope policy has no renderer adoption proof. See candidate receipt.json + closeout.json; do not render this accepted technical item again.
+
+◆ A02-current-R8 exact narrative binding
+2026-10-03 21:21 +08：不可直接重绑旧文本审查，因为作者shots内A02引用/source改变。本轮完成此前缺失的唯一文本任务faccb9cb5fc4db097e721e46e41ce35edd44dc582949649b1073a287be1be91b；manifest f12365227b16d0b38992b28d6e8cfc0205ce468f0e23de6642b0ffbfb0309601，六项pass、两条次要措辞/省略剪辑意见保留。全部冻结输入前后SHA相同；无重渲染、已通过动作/技术复查、画面调用、音轨变化、新运动/资源、生产队列/共享请求/控制器或产品卡变化。文本总结中的“画面内完成”只是作者方案推论，本次未供图/视频，不充作动作证据；scope_annotation.json明确范围。现有控制器89288/renderer89290、批次4/30；原R7质量及R8产品保留。A02新引用规划/呈现、A01 unavailable、A08/A09/改动A10严格hold及整合全片预检/动作/交付仍待；不要重复此已通过文本调用。证据 a02_current_r8_narrative_binding/review.json + outcome.json + closeout.json。
+
+◆ A02-current-R8 scoped planning/presentation completed
+2026-10-03 22:28 +08：此前未审的新配色/字幕与引用衔接，唯一任务9d831903eb10d526ab78f76dcd6f8d3daa52e814f1e3fbfd191eb366c45a450f，显式preflight/规划observable-basis合约实际用于独立调用：端点构图0.90、字幕注意目标0.90、引用/呈现对齐0.88，全部达到0.85；无finding/评分范围违规。用六张1080x1920原尺寸图（quality95无色度降采样JPEG供模型，保留原PNG），包含两个真实字幕时刻88/124与实际首尾77/171。候选manifest f123...、video0593...、真实PTS/词cue/全部冻结输入哈希绑定且前后不变。只新增缺少的88帧抽图，无成片重渲染、动作复审、旧分数修改、音轨/新运动/队列/控制器/共享入口/产品变化。
+acceptance_fragment仅A02规划/呈现，不能当完整生产preflight；原源片五项抽样动作记录仍保留原绑定，未把此规划pass偷换为新成片动作批准。原质量SHA保持。合约仅独立调用实际使用；生产renderer运行story-preflight-v2-verified-replay，不能据此声称加载新合约。A01 unavailable、A08/A09/修改A10的严格hold、其他独立候选整合及全片动作/听审/交付仍待。证据 a02_current_r8_planning_review/assessment.json + acceptance_fragment.json + closeout.json。A02本项已完成，不再重抽签/重做技术校验。
+
+◆ Combined selection binding audit
+2026-10-03 23:30 +08：首次冻结完整作者draft 18b90490b2bc5b58ad8fa4a2765aacebdfe1d3b652e94d3e60a976d5ba188f2e与1211帧逐镜选择清单。65项输入绑定并前后相同；选A01几何v2、A02当前R8整合源、A03–A07当前R8画面、A08四阶段v3、A09/A10共享边界+低手v2。不得拼接整段独立预览，否则保留的旧prefix/tail会覆盖A02等新选择；raw规划图需grade/captions，已有R8片段不得双重处理。四个待重做镜头无旧source_path，不能用旧运动/静帧冒充返修。A09/A10共享图哈希相同；同场作者状态差异只存在声明的strap_route省略，其他场景切换明确。此验证只支持声明/帧覆盖，不证明真实几何/镜间动作/对象身份。
+清除继承的旧整片postproduction元数据，明确execution_ready=false；所有独立文本审查SHA均不同于完整draft，不能拼pass或重绑。A01视觉无答复、A08 .82/.80、A09 .82、修改A10 .72/.80/.75仍阻塞，A02及原六镜通过保留。零render/模型/资产或运动生成/队列/控制器/共享请求/产品变更。下一项缺失前提是新完整draft的一次文本绑定；不能当已获生产预检。证据combined_candidate_binding_audit_v1/selection_recipe.json、audit.json、closeout.json。
+
+◆ Exact combined authored narrative prerequisite complete
+2026-10-04 00:34 +08：唯一文本任务ab6537a12924dfca897479766b4255ecc4a7939f46872d4522a646ec864e9908完成draft 18b90490b2bc5b58ad8fa4a2765aacebdfe1d3b652e94d3e60a976d5ba188f2e 的六项文本pass；issues为空，summary的服务场景无关模板语句小瑕疵原样保留。69项输入前后SHA不变。未供图/视频/音频，summary“可见结果同框”等是作者方案推论，不是实际完成证据；scope_annotation明确，不删除旧独立措辞小问题与任何低分。A01视觉无答复、A08 .82/.80、A09 .82、改动A10 .72/.80/.75仍拦截。零render/视觉重审/声音变更/新运动/资源/队列/共享请求/控制器/产品更改。
+按要求只读登记10份awaiting_storyboard .keyframes.json文件，10份都匹配manifest哈希；历史planning_resume副本也保留，未当作当前派发或26条pending返修的完整清单，不新增任何任务。辅助清单首次误用missing_assets导入名失败，无文件/模型/队列写入；改用实际missing_previsuals后生成清单，失败单另存。主文本调用没有重跑。下一缺失前提为按唯一选择recipe制作完整真实AAC规划预览（尚未制作，不能沿用不同独立preview）；必须标明四段静帧，保留所有hold，不能凭此触发生成或当成成片。证据combined_candidate_narrative_binding_v1/review.json、outcome.json、closeout.json。
+
+
+◆ Exact combined real-AAC planning preview complete
+2026-10-04 02:30 +08：完成首次完整组合规划预览combined_candidate_planning_preview_v6_full_audio，绑定作者draft18b90490b2bc5b58ad8fa4a2765aacebdfe1d3b652e94d3e60a976d5ba188f2e。1211帧native444、24fps、容器TB1/12288、PTS0..50.416667；730帧既有A02及当前R8 A03–A07画面逐帧相同，481帧A01/A08/A09/A10明确标记“静帧规划·未生成/未验收”。完整原AAC ADTS SHA e689a356b181c40a73e6f8750aca88f34f738b725577f84c86ea12baf508fc05；未裁尾17.667ms。全部冻结输入不变。四段标签原图抽样可读，不等于完整视觉/动作/听审通过。
+本轮实际技术失败全部保留：启动SQL表名修正；中间MP4编辑列表吞掉五个末帧（逐输入showinfo定位并用ignore_editlist只读恢复）；错误CFR+编码TB1/12288造成12288fps补帧，独立16px/8帧上限小样证明，正确编码TB1/24+容器TB1/12288；本地异常进程39970沙箱拒绝信号，既有900秒超时自行结束，之前手动停止请求已撤销；1211视频帧上限曾截掉末两AAC包，最后仅stream-copy封装完整音轨，没有重渲染画面。源分段与所有失败均未覆盖。
+零模型/新运动/加速资源/生产入口或产品更改；当前控制器57837/57861（另一个工作维护，不由本轮重启），批次4/30；实际runtime whole_action_v1 / shot-review-v3-explicit-endpoint-evidence / story-preflight-v2-verified-replay按renderer_runtime记录。当前R8卡保留，所有A01 unavailable、A08 .82/.80、A09 .82、改变A10 .72/.80/.75及历史问题继续阻塞。此项技术验收完成不再重跑；下一轮只能针对新组合上下文中一个具体可见问题做检查，不能用同一低分材料抽签、静帧或本预览冒充动作成片。证据receipt.json、edl.json、label_observation.json、closeout.json。
+
+
+◆ A01 planned release-target boundary defect
+2026-10-04 03:31 +08：只检查组合预览A01→A02注意目标。真实规划末帧76/PTS38912/TB1:12288/3.166667s，下一A02帧77/PTS39424/3.208333s；当前作者18b904与预览1d222110哈希绑定。A01作者指定仅推动前景小箱并双手松开，末图双手却在不动的高箱顶部；A02实际第一帧正在量高箱。此专项判断“尾帧行动目标不清”，未声称箱子物理跳变或重判A02已通过动作。
+Built-in image_gen仅一张新尾图草稿，改变买家低姿态/手臂，车辆/两箱/工作人员/机位视觉保留；941×1672。右手清楚了，但左指仍悬在/贴近高箱顶部，单次有界修正失败、草稿拒绝。没有重抽签、追加变体/视觉调用/成片渲染/运动/资源或生产入口、控制器、共享状态、产品改动。所有冻结输入不变；旧A01 HTTP unavailable、A08 .82/.80、A09 .82、变动A10 .72/.80/.75和历史质量问题保留。
+本轮只产生可验的真实新问题证据和一次失败修正，不当成素材或成片通过。下一步仅可针对左手明确下移到小箱近侧角（避开高箱投影）定向修正；不消费失败draft。参考改变后需要新的严格哈希绑定预检，不能拿旧作者/预览pass给新图背书。当前R8保留，控制器57837/57861、批次4/30，实际runtime仍whole_action_v1 / shot-review-v3-explicit-endpoint-evidence / story-preflight-v2-verified-replay。证据a01_release_boundary_design_v3/boundary_inspection.json、local_observation.json、prompt.txt、A01_end.release.draft1.png、next_material_design.json、closeout.json。
+
+◆ A01左手一次有界纠正未达小箱目标
+2026-10-04 04:21轮：a01_release_boundary_design_v4仅一次内置imagegen纠正v3左手。原像素局部对照显示左指向下，但仍在后方高箱上部前侧（约x752..800/y598..670），未到前景小箱下侧示例x716..755/y790..838；保持中等动作目标错误，拒绝采用。保留v3/v4全部图片、prompt、SHA及local_observation，不据静帧认定真实触箱/3D碰撞，也不重审已过A02或原低分。13项冻结输入不变，原整合预览技术/AAC检查不重跑，零运动/正式模型审查/队列/产品卡/控制器/新资源变更。下一步先审合理整体蹲姿和小箱释放可达性，不重复相同手部变体。控制器57837/renderer57861持FD3同inode169195741，批次4/30，无在途任务；当前三轮车产品仍R8。
+
+◆ A01整姿可达性与深蹲释放草图
+2026-10-04 05:21轮：对照真实native起图（深蹲推小箱）与v4浅蹲尾图，作者没有起身节拍；a01_release_pose_design_v5先冻结pose_audit，再一次内置imagegen整姿修改，头肩/髋膝降下，双手转到小箱侧边。此规划局部改善可見；右指仍与小箱右边轮廓贴合（约x889..913/y749..804），松手空气间隙不清，保留中等planned_release_air_gap_not_visible、整图hold，不认定实际3D触箱。原v3/v4失败完整保留，不采纳新图、不重抽签、不重建原组合预览/A02或通过项。11项冻结输入SHA不变；零正式审查/运动/资源/队列/控制器/产品变更。下一项仅针对新深蹲图的明确手/箱边粘连，把双开放手收向自身腹/膝上方并显示清晰背景间隙，不再重复整姿或左指向下变体；新绑定预检与完整动作/交付仍未过。控制器57837/renderer57861保持同inode169195741，4/30，无在途任务，三轮车R8卡保留。
+
+◆ A01深蹲双手收回：规划局部间隙完成
+2026-10-04 06:21轮：a01_release_gap_design_v6一次内置imagegen，仅把v5双前臂/掌收向自身腹前；941×1672，双腕/开放手指各自可见，手与小箱顶/箱边有背景间隙，原右指/边轮廓粘连消失。native全图及1:1对照本地可用参考；不是正式评分、3D几何或动作成片验收，旧v3/v4/v5失败全部保留。binding_change_intent仅声明新A01尾图待单独冻结绑定，原18b904作者及1d222110预览未改；不再生成同类手姿变体。13项冻结输入SHA保持，零正式审查/预览重建/运动/资源/队列/共享请求/控制器/产品更改。下一项为新引用的精确author/keyframes/选择清单、作者字段一致性和改变像素的真实原声规划证据；旧完整文本/预览结果不能直接批准新绑定，A08/A09/改变A10和完整运动/听审/交付仍拦截。实际57837/57861仍持FD3同inode169195741、4/30，无在途任务，三轮车当前R8保留。
+
+◆ A01新尾图整合绑定与旧文本门槛核对
+2026-10-04 07:21轮：combined_a01_release_binding_v2冻结新作者draft c8f58378a575db9efffe0e543f6dc7abc5186d4fede907299660c0af1eb08c38、选择recipe1b9b132c...及哈希绑定.keyframes.json5a6e5898...（32项素材）。仅A01.reference_images[1]改用新松手b5c4e7e5...，实际作者动作/机位/时长/旁白/认可音轨及其余9镜相同，execution_ready=false。新规划仅38帧39..76待改变，1173帧选择不动；本轮无渲染，不把旧预览pass重绑给新像素。
+检查实际workflow.narrative_gate：shots包含引用，是作者字段；新旧差异恰为shots内A01尾图，故旧文本pass不可runtime重绑，require_review实际拒绝不同manifest SHA。保留旧6eeb...文本结果不改，不剥reference_images绕过门槛。新精确文本审核是下一缺失前提，随后只制作变更端点的原AAC规划证据、验证其余画面/时序/音轨不变及新的规划审查。39项冻结输入前后SHA保持，旧quality faad...保持，现有R8卡和57837/57861同锁保持；零模型/渲染/运动/资源/队列/共享请求/控制器或产品更改。其他严格hold及完整动作/听审/交付继续保留。
+
+◆ 新精确剧情绑定：本地SSH权限阻断
+2026-10-04 08:22轮：combined_a01_release_narrative_v2只尝试新c8f58378...文本绑定，调用前固定请求4f258bbf2538ebf2122412d022d79ce8348f998f69fcb562107e92c91d223add。一次本地client调用RuntimeError，未获得模型答案；同一身份只读status核对exit255，安全分类local_network_permission_denied。不能确认远端是否登记，不据此称资源/API失败，不重提/换ID/新worker/新资源或绕过环境限制。已验证现有资源租约到2026-10-05T06:17:38.719Z；确认provider调用数为0、实际是否调用未知，initial_outcome保留原本地计数字段，outcome澄清。49项冻结输入SHA保持，旧quality faad...与当前R8保持；零渲染/运动/队列/产品/控制器修改。继续授权保留，可先推进独立本地38帧变更规划证据；后续模型调用必须先核对相同请求身份。无新剧情/规划/动作/交付通过，全部历史严格hold继续保留。
+
+◆ A01变更38帧的原声规划预览完成
+2026-10-04 09:23轮：combined_a01_release_planning_preview_v2针对新c8f58378...绑定，一次渲染A01终点38帧39..76，余1173帧直接复用旧预览像素；新组合无损封装后逐帧native444相同，1211帧实际PTS n*512/TB1:12288全部匹配，完整AAC ADTS e689a356...逐字节相同、17.667ms音尾保留。video5049696da70be0c5bc7659ce51ad57228b051550e9d1c61dc3c4ad821212e4dd；EDLd850a502...，旧预览/素材不覆盖，其他片段不重复grade/字幕。
+本地只看新39/76终点标签与手箱间隙、77既有A02上下文；39帧黄字幕在下方不遮手/上标，76无活动黄字幕。静帧/局部目视/技术通过不是正式规划、真实运动或听审。17项冻结输入与旧quality保持，零模型/新图/运动/资源/队列/产品/控制器/共享请求修改；57837/57861同锁、批次4/30。SSH权限阻断未改变，本轮不再网络重试；新精确文本和一次变更上下文规划审查仍缺，先等传输条件改变再核对同一4f258bbf身份。新技术项完成不再重跑，所有原低分/中高历史、完整运动/听审/交付门槛继续保留。

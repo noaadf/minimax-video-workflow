@@ -1,0 +1,15 @@
+{
+  "provider": "bigmodel",
+  "transport": "chat_completions",
+  "base_url": "https://open.bigmodel.cn/api/paas/v4",
+  "api_key_env": "GLM_API_KEY",
+  "model": "glm-5.3",
+  "reasoning_effort": "high",
+  "thinking": {
+    "type": "enabled"
+  },
+  "supports_images": false,
+  "use_proxy": false,
+  "timeout_seconds": 120,
+  "configuration_source": "Prepared general API text profile; not enabled in production. Balance and task validation pending."
+}

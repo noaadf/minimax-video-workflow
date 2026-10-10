@@ -1,0 +1,7 @@
+{
+  "seeds": ["https://www.news.cn/tech/20260929/07ef3729fcad4287af9fa8aac8fef70f/c.html"],
+  "domains": ["news.cn"],
+  "discover_links": false,
+  "max_articles": 1,
+  "max_age_days": 3
+}

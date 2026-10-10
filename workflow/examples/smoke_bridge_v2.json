@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "id": "bridge_pipeline_smoke_v2",
+  "title": "中国建造｜流水线验收样片（复用既有素材）",
+  "cover_title": "把精度写进群山",
+  "template": "engineering_tension",
+  "duration_seconds": 30,
+  "aspect_ratio": "9:16",
+  "facts": [
+    {
+      "id": "F1",
+      "text": "最高墩117米",
+      "source_url": "https://gz.people.com.cn/n2/2025/1230/c411544-41458526.html"
+    },
+    {
+      "id": "F2",
+      "text": "高墩线形毫米级精度要求",
+      "source_url": "https://gz.people.com.cn/n2/2025/1230/c411544-41458526.html"
+    },
+    {
+      "id": "F3",
+      "text": "液压爬模工艺",
+      "source_url": "https://gz.people.com.cn/n2/2025/1230/c411544-41458526.html"
+    },
+    {
+      "id": "F4",
+      "text": "智能爬模监测顶升同步偏差",
+      "source_url": "https://gz.people.com.cn/n2/2025/1230/c411544-41458526.html"
+    },
+    {
+      "id": "F5",
+      "text": "激光雷达与BIM点云模型",
+      "source_url": "https://gz.people.com.cn/n2/2025/1230/c411544-41458526.html"
+    },
+    {
+      "id": "F6",
+      "text": "智能塔机远程驾驶、地面操控",
+      "source_url": "https://gz.people.com.cn/n2/2025/1230/c411544-41458526.html"
+    }
+  ],
+  "continuity_bible": "AI conceptual construction scene, same unfinished concrete bridge piers, consistent valley axis and bridge deck height. No train. No change of bridge type. Orange vests and white helmets. Never imply actual incident footage.",
+  "comment_prompt": "你家乡哪座桥，真正改变了你的出行？",
+  "mode": "reused_assets_pipeline_smoke",
+  "music": {
+    "path": "/path/to/workflow/output/douyin_v3_2_20261001/music_bed.wav",
+    "license_note": "既有V3.2样片音乐，用于流水线内测；对外发布前核对原曲许可。"
+  },
+  "voice": {
+    "name": "zh-CN-YunjianNeural",
+    "pitch": "-18Hz",
+    "rate": "+0%"
+  },
+  "shots": [
+    {
+      "id": "shot01",
+      "camera": "top-down",
+      "duration_seconds": 2.5,
+      "prompt": "Existing conceptual engineering shot for deterministic pipeline validation.",
+      "source_path": "/path/to/workflow/output/douyin_v3_2_20261001/gpu4_raw.mp4",
+      "source_start": 0,
+      "seed": 2026100100,
+      "fact_ids": []
+    },
+    {
+      "id": "shot02",
+      "camera": "low-angle",
+      "duration_seconds": 4.5,
+      "prompt": "Existing conceptual engineering shot for deterministic pipeline validation.",
+      "source_path": "/path/to/workflow/output/douyin_v3_2_20261001/gpu5_raw.mp4",
+      "source_start": 0,
+      "seed": 2026100101,
+      "fact_ids": []
+    },
+    {
+      "id": "shot03",
+      "camera": "axial",
+      "duration_seconds": 5,
+      "prompt": "Existing conceptual engineering shot for deterministic pipeline validation.",
+      "source_path": "/path/to/workflow/output/douyin_v3_2_20261001/gpu6_raw.mp4",
+      "source_start": 0,
+      "seed": 2026100102,
+      "fact_ids": []
+    },
+    {
+      "id": "shot04",
+      "camera": "top-down",
+      "duration_seconds": 5,
+      "prompt": "Existing conceptual engineering shot for deterministic pipeline validation.",
+      "source_path": "/path/to/workflow/output/douyin_v3_2_20261001/gpu4_raw.mp4",
+      "source_start": 0,
+      "seed": 2026100103,
+      "fact_ids": []
+    },
+    {
+      "id": "shot05",
+      "camera": "low-angle",
+      "duration_seconds": 5,
+      "prompt": "Existing conceptual engineering shot for deterministic pipeline validation.",
+      "source_path": "/path/to/workflow/output/douyin_v3_2_20261001/gpu5_raw.mp4",
+      "source_start": 0,
+      "seed": 2026100104,
+      "fact_ids": []
+    },
+    {
+      "id": "shot06",
+      "camera": "axial",
+      "duration_seconds": 5,
+      "prompt": "Existing conceptual engineering shot for deterministic pipeline validation.",
+      "source_path": "/path/to/workflow/output/douyin_v3_2_20261001/gpu6_raw.mp4",
+      "source_start": 0,
+      "seed": 2026100105,
+      "fact_ids": []
+    },
+    {
+      "id": "shot07",
+      "camera": "hero-wide",
+      "duration_seconds": 3,
+      "prompt": "Existing conceptual engineering shot for deterministic pipeline validation.",
+      "source_path": "/path/to/workflow/output/douyin_v3_2_20261001/gpu7_raw.mp4",
+      "source_start": 0,
+      "seed": 2026100106,
+      "fact_ids": []
+    }
+  ],
+  "narration": [
+    {
+      "start": 0,
+      "end": 2.4,
+      "text": "往下看。",
+      "fact_ids": [],
+      "audio_path": "/path/to/workflow/output/douyin_v3_2_20261001/voice_00.mp3"
+    },
+    {
+      "start": 2.4,
+      "end": 6.6,
+      "text": "百米高墩，拼的是毫米级线形控制。",
+      "fact_ids": [],
+      "audio_path": "/path/to/workflow/output/douyin_v3_2_20261001/voice_01.mp3"
+    },
+    {
+      "start": 6.6,
+      "end": 10.8,
+      "text": "激光雷达，联动 B I M 点云模型。",
+      "fact_ids": [],
+      "audio_path": "/path/to/workflow/output/douyin_v3_2_20261001/voice_02.mp3"
+    },
+    {
+      "start": 10.8,
+      "end": 14.35,
+      "text": "智能塔机，地面远程操控。",
+      "fact_ids": [],
+      "audio_path": "/path/to/workflow/output/douyin_v3_2_20261001/voice_03.mp3"
+    },
+    {
+      "start": 15.05,
+      "end": 18.2,
+      "text": "贵州，六志河特大桥。",
+      "fact_ids": [],
+      "audio_path": "/path/to/workflow/output/douyin_v3_2_20261001/voice_05.mp3"
+    },
+    {
+      "start": 18.2,
+      "end": 22.8,
+      "text": "液压爬模，实时监测顶升同步偏差。",
+      "fact_ids": [],
+      "audio_path": "/path/to/workflow/output/douyin_v3_2_20261001/voice_06.mp3"
+    },
+    {
+      "start": 22.8,
+      "end": 26.1,
+      "text": "把精度写进群山，把天堑接成通途。",
+      "fact_ids": [],
+      "audio_path": "/path/to/workflow/output/douyin_v3_2_20261001/voice_07.mp3"
+    },
+    {
+      "start": 26.1,
+      "end": 29.1,
+      "text": "这，就是中国建造！",
+      "fact_ids": [],
+      "audio_path": "/path/to/workflow/output/douyin_v3_2_20261001/voice_08.mp3"
+    }
+  ],
+  "review_mode": "api",
+  "sound_effects": [
+    {
+      "path": "/path/to/workflow/output/douyin_v3_2_20261001/original_foley.wav",
+      "start": 0,
+      "duration_seconds": 30,
+      "gain_db": -3
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+S04: 0/199 frames
+S04: 24/199 frames
+S04: 48/199 frames
+S04: 72/199 frames
+S04: 96/199 frames
+S04: 120/199 frames
+S04: 144/199 frames
+S04: 168/199 frames
+S04: 192/199 frames
+saved /path/to/workflow/tools/motion_graphics/.demos-q8ixabvh/stat_highlight.mp4 (199 frames, 8.292s)
+verified stat_highlight
+D02: 0/192 frames
+D02: 24/192 frames
+D02: 48/192 frames
+D02: 72/192 frames
+D02: 96/192 frames
+D02: 120/192 frames
+D02: 144/192 frames
+D02: 168/192 frames
+saved /path/to/workflow/tools/motion_graphics/.demos-q8ixabvh/comparison.mp4 (192 frames, 8.000s)
+verified comparison
+D03: 0/192 frames
+D03: 24/192 frames
+D03: 48/192 frames
+D03: 72/192 frames
+D03: 96/192 frames
+D03: 120/192 frames
+D03: 144/192 frames
+D03: 168/192 frames
+saved /path/to/workflow/tools/motion_graphics/.demos-q8ixabvh/process.mp4 (192 frames, 8.000s)
+verified process
+D04: 0/192 frames
+D04: 24/192 frames
+D04: 48/192 frames
+D04: 72/192 frames
+D04: 96/192 frames
+D04: 120/192 frames
+D04: 144/192 frames
+D04: 168/192 frames
+saved /path/to/workflow/tools/motion_graphics/.demos-q8ixabvh/trend.mp4 (192 frames, 8.000s)
+verified trend

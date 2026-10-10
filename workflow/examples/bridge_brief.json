@@ -1,0 +1,42 @@
+{
+  "facts": [
+    {
+      "id": "F1",
+      "text": "最高墩117米",
+      "source_url": "https://gz.people.com.cn/n2/2025/1230/c411544-41458526.html"
+    },
+    {
+      "id": "F2",
+      "text": "高墩线形毫米级精度要求",
+      "source_url": "https://gz.people.com.cn/n2/2025/1230/c411544-41458526.html"
+    },
+    {
+      "id": "F3",
+      "text": "液压爬模工艺",
+      "source_url": "https://gz.people.com.cn/n2/2025/1230/c411544-41458526.html"
+    },
+    {
+      "id": "F4",
+      "text": "智能爬模监测顶升同步偏差",
+      "source_url": "https://gz.people.com.cn/n2/2025/1230/c411544-41458526.html"
+    },
+    {
+      "id": "F5",
+      "text": "激光雷达与BIM点云模型",
+      "source_url": "https://gz.people.com.cn/n2/2025/1230/c411544-41458526.html"
+    },
+    {
+      "id": "F6",
+      "text": "智能塔机远程驾驶、地面操控",
+      "source_url": "https://gz.people.com.cn/n2/2025/1230/c411544-41458526.html"
+    }
+  ],
+  "music": {
+    "path": "/path/to/workflow/output/douyin_v3_2_20261001/music_bed.wav",
+    "license_note": "既有V3.2样片音乐，用于流水线内测；对外发布前核对原曲许可。"
+  },
+  "id": "bridge_auto_plan_v1",
+  "template": "engineering_tension",
+  "topic": "六志河特大桥的高墩施工与毫米级精度；回顾工程技术，不冒充今日新闻",
+  "requirements": "多个视角、快速悬念开头、克制准确的专业名词、男低音、末尾留余音，评论问题自然。禁止把落石或险情当真实事件。"
+}

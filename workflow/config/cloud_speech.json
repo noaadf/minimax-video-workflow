@@ -1,0 +1,9 @@
+{
+  "host": "ma-user@modelarts.example.invalid",
+  "port": 32295,
+  "identity_file": "~/.ssh/id_rsa",
+  "code_root": "/home/ma-user/.video-workflow-review/rpc_20261002",
+  "state_root": "/home/ma-user/.video-workflow-review/speech_state",
+  "python": "/home/ma-user/.video-workflow-review/speech-venv/bin/python",
+  "wait_seconds": 960
+}

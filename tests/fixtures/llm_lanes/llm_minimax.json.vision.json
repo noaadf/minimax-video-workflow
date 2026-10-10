@@ -1,0 +1,15 @@
+{
+  "provider": "minimax",
+  "base_url": "https://api.minimaxi.com/anthropic",
+  "transport": "anthropic_messages",
+  "model": "MiniMax-M2.5",
+  "api_key_env": "MINIMAX_ANTHROPIC_API_KEY",
+  "shell_settings_source": {
+    "path": "/Users/<user>/.zshrc",
+    "function": "claude-minimax"
+  },
+  "supports_images": false,
+  "timeout_seconds": 90,
+  "total_timeout_seconds": 120,
+  "stream": true
+}

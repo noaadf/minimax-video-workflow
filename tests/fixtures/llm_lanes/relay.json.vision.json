@@ -1,0 +1,16 @@
+{
+  "provider": "codex_relay",
+  "transport": "responses",
+  "base_url": "https://api.picpi.top",
+  "api_key_env": "CODEX_RELAY_API_KEY",
+  "model": "gpt-6-sol",
+  "reasoning_effort": "medium",
+  "supports_images": false,
+  "enabled_in_production": false,
+  "relay_credential_source": {
+    "config_path": "~/.codex/config.toml",
+    "provider": "relay",
+    "shell_path": "~/.zshrc"
+  },
+  "service_tier": "priority"
+}

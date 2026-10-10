@@ -1,0 +1,14 @@
+{
+  "shot_id": "D03",
+  "duration_seconds": 8.0,
+  "layout": "process",
+  "title": "一座塔，三段协同",
+  "reveals": [
+    {"t": 0.0, "kind": "title"},
+    {"t": 0.6, "kind": "stat", "text": "从原料到目标产物", "emphasis": "secondary"},
+    {"t": 1.3, "kind": "step", "title": "连续进料", "text": "原料稳定进入，建立连续流动。"},
+    {"t": 2.6, "kind": "step", "title": "充分接触", "text": "两相逆流接触，完成物质传递。"},
+    {"t": 4.0, "kind": "step", "title": "分离回收", "text": "目标组分分离，萃取剂循环利用。"},
+    {"t": 6.7, "kind": "source_note", "text": "流程示意 · 用于渲染器版式演示"}
+  ]
+}

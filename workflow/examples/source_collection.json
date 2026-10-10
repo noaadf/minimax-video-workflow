@@ -1,0 +1,7 @@
+{
+  "seeds": ["https://www.news.cn/tech/", "https://www.cas.cn/"],
+  "domains": ["news.cn", "cas.cn"],
+  "discover_links": true,
+  "max_articles": 6,
+  "max_age_days": 2
+}

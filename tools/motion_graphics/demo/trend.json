@@ -1,0 +1,13 @@
+{
+  "shot_id": "D04",
+  "duration_seconds": 8.0,
+  "layout": "trend",
+  "title": "效率，沿时间上升",
+  "reveals": [
+    {"t": 0.0, "kind": "title"},
+    {"t": 0.45, "kind": "trend", "unit": "回收率 / %", "points": [{"label": "阶段一", "value": 52}, {"label": "阶段二", "value": 64}, {"label": "阶段三", "value": 73}, {"label": "阶段四", "value": 85}, {"label": "阶段五", "value": 94}]},
+    {"t": 1.7, "kind": "stat", "text": "回收率的阶段性改善", "emphasis": "secondary"},
+    {"t": 3.8, "kind": "number_roll", "text": "最终回收率 94%", "from": 0, "to": 94, "suffix": "%"},
+    {"t": 6.7, "kind": "source_note", "text": "演示数据 · 趋势轴从零起算"}
+  ]
+}
